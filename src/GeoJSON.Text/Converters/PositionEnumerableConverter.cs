@@ -1,6 +1,6 @@
 ﻿// Copyright © Joerg Battermann 2014, Matt Hunt 2017
 
-using GeoJSON.Text.Geometry;
+using Microsoft.Azure.Cosmos.Spatial;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +12,7 @@ namespace GeoJSON.Text.Converters
     /// <summary>
     /// Converter to read and write the <see cref="IReadOnlyCollection{IPosition}" /> type.
     /// </summary>
-    public class PositionEnumerableConverter : JsonConverter<IReadOnlyCollection<IPosition>>
+    public class PositionEnumerableConverter : JsonConverter<IReadOnlyCollection<Position>>
     {
         private static readonly PositionConverter PositionConverter = new();
 
@@ -25,7 +25,7 @@ namespace GeoJSON.Text.Converters
         /// </returns>
         public override bool CanConvert(Type objectType)
         {
-            return typeof(IReadOnlyCollection<IPosition>).IsAssignableFromType(objectType);
+            return typeof(IReadOnlyCollection<Position>).IsAssignableFromType(objectType);
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace GeoJSON.Text.Converters
         /// <returns>
         ///     The object value.
         /// </returns>
-        public override IReadOnlyCollection<IPosition> Read(
+        public override IReadOnlyCollection<Position> Read(
             ref Utf8JsonReader reader,
             Type type,
             JsonSerializerOptions options)
@@ -54,18 +54,18 @@ namespace GeoJSON.Text.Converters
             }
 
             var startDepth = reader.CurrentDepth;
-            var result = new List<IPosition>();
+            var result = new List<Position>();
             while (reader.Read())
             {
                 if (JsonTokenType.EndArray == reader.TokenType && reader.CurrentDepth == startDepth)
                 {
-                    return new ReadOnlyCollection<IPosition>(result);
+                    return new ReadOnlyCollection<Position>(result);
                 }
                 if (reader.TokenType == JsonTokenType.StartArray)
                 {
                     result.Add(PositionConverter.Read(
                             ref reader,
-                            typeof(IPosition),
+                            typeof(Position),
                             options));
                 }
             }
@@ -81,7 +81,7 @@ namespace GeoJSON.Text.Converters
         /// <param name="serializer">The calling serializer.</param>
         public override void Write(
             Utf8JsonWriter writer,
-            IReadOnlyCollection<IPosition> coordinateElements,
+            IReadOnlyCollection<Position> coordinateElements,
             JsonSerializerOptions options)
         {
             writer.WriteStartArray();

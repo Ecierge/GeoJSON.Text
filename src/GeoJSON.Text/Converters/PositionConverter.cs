@@ -1,6 +1,7 @@
 ﻿// Copyright © Joerg Battermann 2014, Matt Hunt 2017
 
-using GeoJSON.Text.Geometry;
+//using GeoJSON.Text.Geometry;
+using Microsoft.Azure.Cosmos.Spatial;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -12,7 +13,7 @@ namespace GeoJSON.Text.Converters
     ///     Converter to read and write an <see cref="IPosition" />, that is,
     ///     the coordinates of a <see cref="Point" />.
     /// </summary>
-    public class PositionConverter : JsonConverter<IPosition>
+    public class PositionConverter : JsonConverter<Position>
     {
         /// <summary>
         ///     Determines whether this instance can convert the specified object type.
@@ -23,7 +24,7 @@ namespace GeoJSON.Text.Converters
         /// </returns>
         public override bool CanConvert(Type objectType)
         {
-            return typeof(IPosition).IsAssignableFromType(objectType);
+            return typeof(Position).IsAssignableFromType(objectType);
         }
 
         /// <summary>
@@ -35,7 +36,7 @@ namespace GeoJSON.Text.Converters
         /// <returns>
         ///     The object value.
         /// </returns>
-        public override IPosition Read(
+        public override Position Read(
             ref Utf8JsonReader reader,
             Type type,
             JsonSerializerOptions options)
@@ -48,7 +49,7 @@ namespace GeoJSON.Text.Converters
                 }
 
                 double lng, lat;
-                double? alt;
+               // double? alt;
 
                 // Read longitude
                 if (!reader.Read())
@@ -99,30 +100,30 @@ namespace GeoJSON.Text.Converters
                 }
 
                 // Read altitude, or return if end of array is found
-                if (!reader.Read())
-                {
-                    throw new ArgumentException("Unexpected end of data");
-                }
-                if (reader.TokenType == JsonTokenType.EndArray)
-                {
-                    return new Position(lat, lng);
-                }
-                else if (reader.TokenType == JsonTokenType.Null)
-                {
-                    alt = null;
-                }
-                else if (reader.TokenType == JsonTokenType.Number)
-                {
-                    alt = reader.GetDouble();
-                }
-                else if (reader.TokenType == JsonTokenType.String)
-                {
-                    alt = JsonSerializer.Deserialize<double>(ref reader, options);
-                }
-                else
-                {
-                    throw new ArgumentException("Expected number but got other type");
-                }
+                //if (!reader.Read())
+                //{
+                //    throw new ArgumentException("Unexpected end of data");
+                //}
+                //if (reader.TokenType == JsonTokenType.EndArray)
+                //{
+                //    return new Position(lat, lng);
+                //}
+                //else if (reader.TokenType == JsonTokenType.Null)
+                //{
+                //    alt = null;
+                //}
+                //else if (reader.TokenType == JsonTokenType.Number)
+                //{
+                //    alt = reader.GetDouble();
+                //}
+                //else if (reader.TokenType == JsonTokenType.String)
+                //{
+                //    alt = JsonSerializer.Deserialize<double>(ref reader, options);
+                //}
+                //else
+                //{
+                //    throw new ArgumentException("Expected number but got other type");
+                //}
 
                 // Check what comes next. Expects end of array.
                 if (!reader.Read())
@@ -134,7 +135,7 @@ namespace GeoJSON.Text.Converters
                     throw new ArgumentException("Expected 2 or 3 coordinates but got >= 4");
                 }
 
-                return new Position(lat, lng, alt);
+                return new Position(lat, lng);//, alt);
             }
             catch (Exception e)
             {
@@ -150,7 +151,7 @@ namespace GeoJSON.Text.Converters
         /// <param name="serializer">The calling serializer.</param>
         public override void Write(
             Utf8JsonWriter writer,
-            IPosition coordinates,
+            Position coordinates,
             JsonSerializerOptions options)
         {
             writer.WriteStartArray();
@@ -158,12 +159,13 @@ namespace GeoJSON.Text.Converters
             writer.WriteNumberValue(coordinates.Longitude);
             writer.WriteNumberValue(coordinates.Latitude);
 
-            if (coordinates.Altitude.HasValue)
-            {
-                writer.WriteNumberValue(coordinates.Altitude.Value);
-            }
+            //if (coordinates.Altitude.HasValue)
+            //{
+            //    writer.WriteNumberValue(coordinates.Altitude.Value);
+            //}
 
             writer.WriteEndArray();
         }
+
     }
 }

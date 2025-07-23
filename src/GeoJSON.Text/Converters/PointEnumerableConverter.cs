@@ -1,11 +1,11 @@
 // Copyright � Joerg Battermann 2014, Matt Hunt 2017
 
-using GeoJSON.Text.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Azure.Cosmos.Spatial;
 
 namespace GeoJSON.Text.Converters
 {
@@ -24,7 +24,7 @@ namespace GeoJSON.Text.Converters
             writer.WriteStartArray();
             foreach (var point in value)
             {
-                PositionConverter.Write(writer, point.Coordinates, options);
+                PositionConverter.Write(writer, point.Position, options);
             }
             writer.WriteEndArray();
         }
@@ -55,17 +55,20 @@ namespace GeoJSON.Text.Converters
                 {
                     return new ReadOnlyCollection<Point>(result);
                 }
-                if(JsonTokenType.EndArray == reader.TokenType)
-                {
-                    result.Add(new Point(numbers.ToPosition()));
+                //if(JsonTokenType.EndArray == reader.TokenType)
+                //{
+                //    result.Add(new Point(numbers.ToPosition()));
 
-                    // We have finished reading this internal point array, clear so we can read next (If needed)
-                    numbers.Clear();
-                }
+                //    // We have finished reading this internal point array, clear so we can read next (If needed)
+                //    numbers.Clear();
+                //}
                 if(reader.TokenType == JsonTokenType.Number)
-                {
+                {  
+                    var position = new Position(numbers.ToArray());
+                    var point = ConvertToCosmosPosition(position);
+                    result.Add(point);
                     numbers.Add(reader.GetDouble());
-                }
+                 }
             }
 
             throw new JsonException($"expected null, object or array token but received {reader.TokenType}");
@@ -75,6 +78,11 @@ namespace GeoJSON.Text.Converters
         public override bool CanConvert(Type objectType)
         {
             return objectType == typeof(ReadOnlyCollection<Point>);
+        }
+        // Add a helper method to convert GeoJSON.Text.Geometry.Position to Microsoft.Azure.Cosmos.Spatial.Position
+        private static Point ConvertToCosmosPosition(Position position)
+        {
+            return new Point(position.Longitude, position.Latitude);
         }
     }
 }

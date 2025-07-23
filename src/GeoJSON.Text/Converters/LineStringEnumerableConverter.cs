@@ -1,11 +1,11 @@
 ﻿// Copyright © Joerg Battermann 2014, Matt Hunt 2017
 
-using GeoJSON.Text.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Azure.Cosmos.Spatial;
 
 namespace GeoJSON.Text.Converters
 {
@@ -57,17 +57,17 @@ namespace GeoJSON.Text.Converters
             var result = new List<LineString>();
             while (reader.Read())
             {
-                if(JsonTokenType.EndArray == reader.TokenType && reader.CurrentDepth == startDepth)
-                {
-                    return new ReadOnlyCollection<LineString>(result);
-                }
-                if(reader.TokenType == JsonTokenType.StartArray)
-                {
-                    result.Add(new LineString(LineStringConverter.Read(
-                        ref reader,
-                        typeof(IEnumerable<IPosition>),
-                        options)));
-                }
+                //if (JsonTokenType.EndArray == reader.TokenType && reader.CurrentDepth == startDepth)
+                //{
+                //    return new ReadOnlyCollection<LineString>(result);
+                //}
+                //if (reader.TokenType == JsonTokenType.StartArray)
+                //{
+                //    result.Add(new LineString(LineStringConverter.Read(
+                //        ref reader,
+                //        typeof(IEnumerable<double>),
+                //        options)));
+                //}
             }
 
             throw new JsonException($"expected null, object or array token but received {reader.TokenType}");
@@ -85,10 +85,10 @@ namespace GeoJSON.Text.Converters
             JsonSerializerOptions options)
         {
             writer.WriteStartArray();
-            foreach (var subPolygon in value)
-            {
-                LineStringConverter.Write(writer, subPolygon.Coordinates, options);
-            }
+            //foreach (var subPolygon in value)
+            //{
+            //    LineStringConverter.Write(writer, subPolygon.Positions, options);
+            //}
             writer.WriteEndArray();
         }
     }
