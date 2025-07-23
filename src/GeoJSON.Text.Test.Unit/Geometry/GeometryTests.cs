@@ -11,6 +11,8 @@ using NUnit.Framework;
 
 namespace GeoJSON.Text.Tests.Geometry
 {
+    using Geometry = Microsoft.Azure.Cosmos.Spatial.Geometry;
+
     [TestFixture]
     public class GeometryTests : TestBase
     {
@@ -18,16 +20,16 @@ namespace GeoJSON.Text.Tests.Geometry
         {
             get
             {
-                var point = new MyPoint(new Position(1, 2, 3));
+                var point = new Point(new Position(1, 2, 3));
 
-                var multiPoint = new MultiPoint(new List<MyPoint>
+                var multiPoint = new MultiPoint(new List<Point>
                 {
-                    new MyPoint(new Position(52.379790828551016, 5.3173828125)),
-                    new MyPoint(new Position(52.36721467920585, 5.456085205078125)),
-                    new MyPoint(new Position(52.303440474272755, 5.386047363281249, 4.23))
+                    new Point(new Position(52.379790828551016, 5.3173828125)),
+                    new Point(new Position(52.36721467920585, 5.456085205078125)),
+                    new Point(new Position(52.303440474272755, 5.386047363281249, 4.23))
                 });
 
-                var lineString = new LineString(new List<IPosition>
+                var lineString = new LineString(new List<Position>
                 {
                     new Position(52.379790828551016, 5.3173828125),
                     new Position(52.36721467920585, 5.456085205078125),
@@ -36,13 +38,13 @@ namespace GeoJSON.Text.Tests.Geometry
 
                 var multiLineString = new MultiLineString(new List<LineString>
                 {
-                    new LineString(new List<IPosition>
+                    new LineString(new List<Position>
                     {
                         new Position(52.379790828551016, 5.3173828125),
                         new Position(52.36721467920585, 5.456085205078125),
                         new Position(52.303440474272755, 5.386047363281249, 4.23)
                     }),
-                    new LineString(new List<IPosition>
+                    new LineString(new List<Position>
                     {
                         new Position(52.379790828551016, 5.3273828125),
                         new Position(52.36721467920585, 5.486085205078125),
@@ -52,7 +54,7 @@ namespace GeoJSON.Text.Tests.Geometry
 
                 var polygon = new Polygon(new List<LineString>
                 {
-                    new LineString(new List<IPosition>
+                    new LineString(new List<Position>
                     {
                         new Position(52.379790828551016, 5.3173828125),
                         new Position(52.36721467920585, 5.456085205078125),
@@ -65,7 +67,7 @@ namespace GeoJSON.Text.Tests.Geometry
                 {
                     new Polygon(new List<LineString>
                     {
-                        new LineString(new List<IPosition>
+                        new LineString(new List<Position>
                         {
                             new Position(52.959676831105995, -2.6797102391514338),
                             new Position(52.9608756693609, -2.6769029474483279),
@@ -82,7 +84,7 @@ namespace GeoJSON.Text.Tests.Geometry
                     }),
                     new Polygon(new List<LineString>
                     {
-                        new LineString(new List<IPosition>
+                        new LineString(new List<Position>
                         {
                             new Position(52.89610842810761, -2.69628632041613),
                             new Position(52.8894641454077, -2.75901233808515),

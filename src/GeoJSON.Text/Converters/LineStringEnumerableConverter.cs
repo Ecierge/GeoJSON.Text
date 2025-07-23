@@ -10,9 +10,9 @@ using Microsoft.Azure.Cosmos.Spatial;
 namespace GeoJSON.Text.Converters
 {
     /// <summary>
-    /// Converter to read and write the <see cref="IReadOnlyCollection{LineString}" /> type.
+    /// Converter to read and write the <see cref="IList{LinearRing}" /> type.
     /// </summary>
-    public class LineStringEnumerableConverter : JsonConverter<IReadOnlyCollection<LineString>>
+    public class LineStringEnumerableConverter : JsonConverter<IList<LinearRing>>
     {
         private static readonly PositionEnumerableConverter LineStringConverter = new PositionEnumerableConverter();
 
@@ -31,14 +31,14 @@ namespace GeoJSON.Text.Converters
         /// <summary>
         /// Reads the JSON representation of the object.
         /// </summary>
-        /// <param name="reader">The <see cref="T:Newtonsoft.Json.JsonReader" /> to read from.</param>
+        /// <param name="reader">The <see cref="T:System.Text.Json.Utf8JsonReader" /> to read from.</param>
         /// <param name="objectType">Type of the object.</param>
         /// <param name="existingValue">The existing value of object being read.</param>
         /// <param name="serializer">The calling serializer.</param>
         /// <returns>
         /// The object value.
         /// </returns>
-        public override IReadOnlyCollection<LineString> Read(
+        public override IList<LinearRing> Read(
             ref Utf8JsonReader reader,
             Type type,
             JsonSerializerOptions options)
@@ -54,20 +54,20 @@ namespace GeoJSON.Text.Converters
             }
 
             var startDepth = reader.CurrentDepth;
-            var result = new List<LineString>();
+            var result = new List<LinearRing>();
             while (reader.Read())
             {
-                //if (JsonTokenType.EndArray == reader.TokenType && reader.CurrentDepth == startDepth)
-                //{
-                //    return new ReadOnlyCollection<LineString>(result);
-                //}
-                //if (reader.TokenType == JsonTokenType.StartArray)
-                //{
-                //    result.Add(new LineString(LineStringConverter.Read(
-                //        ref reader,
-                //        typeof(IEnumerable<double>),
-                //        options)));
-                //}
+                if (JsonTokenType.EndArray == reader.TokenType && reader.CurrentDepth == startDepth)
+                {
+                    return result;
+                }
+                if (reader.TokenType == JsonTokenType.StartArray)
+                {
+                    result.Add(new LinearRing(LineStringConverter.Read(
+                        ref reader,
+                        typeof(IEnumerable<double>),
+                        options)));
+                }
             }
 
             throw new JsonException($"expected null, object or array token but received {reader.TokenType}");
@@ -81,14 +81,14 @@ namespace GeoJSON.Text.Converters
         /// <param name="serializer">The calling serializer.</param>
         public override void Write(
             Utf8JsonWriter writer,
-            IReadOnlyCollection<LineString> value,
+            IList<LinearRing> value,
             JsonSerializerOptions options)
         {
             writer.WriteStartArray();
-            //foreach (var subPolygon in value)
-            //{
-            //    LineStringConverter.Write(writer, subPolygon.Positions, options);
-            //}
+            foreach (var subPolygon in value)
+            {
+                LineStringConverter.Write(writer, subPolygon.Positions, options);
+            }
             writer.WriteEndArray();
         }
     }

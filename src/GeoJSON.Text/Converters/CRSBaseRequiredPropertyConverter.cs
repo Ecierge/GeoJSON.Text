@@ -1,37 +1,38 @@
-﻿using GeoJSON.Text.CoordinateReferenceSystem;
+﻿using Microsoft.Azure.Cosmos.Spatial;
+
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace GeoJSON.Text.Converters
 {
-    public class CRSBaseRequiredPropertyConverter : JsonConverter<CRSBase>
+    public class CrsRequiredPropertyConverter : JsonConverter<Crs>
     {
-        public override CRSBase Read(
+        public override Crs Read(
             ref Utf8JsonReader reader,
             Type type,
             JsonSerializerOptions options)
         {
             // Don't pass in options when recursively calling Deserialize.
-            var crsBaseClass = JsonSerializer.Deserialize<CRSBase>(ref reader);
+            var CrsClass = JsonSerializer.Deserialize<Crs>(ref reader);
 
-            if (crsBaseClass.Type == default)
+            if (CrsClass.Type == default)
                 throw new JsonException("Required property Type not set in the JSON");
 
-            if (crsBaseClass.Properties == default)
+            if (CrsClass.Properties == default)
                 throw new JsonException("Required property Properties not set in the JSON");
 
             // Check for required fields set by values in JSON
-            return crsBaseClass;
+            return CrsClass;
         }
 
         public override void Write(
             Utf8JsonWriter writer,
-            CRSBase crsBaseClass,
+            Crs CrsClass,
             JsonSerializerOptions options)
         {
             // Don't pass in options when recursively calling Serialize.
-            JsonSerializer.Serialize(writer, crsBaseClass);
+            JsonSerializer.Serialize(writer, CrsClass);
         }
     }
 }

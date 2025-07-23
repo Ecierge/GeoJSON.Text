@@ -12,7 +12,7 @@ namespace GeoJSON.Text.Converters
     /// <summary>
     /// Converter to read and write the <see cref="IReadOnlyCollection{IPosition}" /> type.
     /// </summary>
-    public class PositionEnumerableConverter : JsonConverter<IReadOnlyCollection<Position>>
+    public class PositionEnumerableConverter : JsonConverter<IList<Position>>
     {
         private static readonly PositionConverter PositionConverter = new();
 
@@ -31,14 +31,14 @@ namespace GeoJSON.Text.Converters
         /// <summary>
         ///     Reads the JSON representation of the object.
         /// </summary>
-        /// <param name="reader">The <see cref="T:Newtonsoft.Json.JsonReader" /> to read from.</param>
+        /// <param name="reader">The <see cref="T:System.Text.Json.Utf8JsonReader" /> to read from.</param>
         /// <param name="objectType">Type of the object.</param>
         /// <param name="existingValue">The existing value of object being read.</param>
         /// <param name="serializer">The calling serializer.</param>
         /// <returns>
         ///     The object value.
         /// </returns>
-        public override IReadOnlyCollection<Position> Read(
+        public override IList<Position> Read(
             ref Utf8JsonReader reader,
             Type type,
             JsonSerializerOptions options)
@@ -59,7 +59,7 @@ namespace GeoJSON.Text.Converters
             {
                 if (JsonTokenType.EndArray == reader.TokenType && reader.CurrentDepth == startDepth)
                 {
-                    return new ReadOnlyCollection<Position>(result);
+                    return result;
                 }
                 if (reader.TokenType == JsonTokenType.StartArray)
                 {
@@ -81,7 +81,7 @@ namespace GeoJSON.Text.Converters
         /// <param name="serializer">The calling serializer.</param>
         public override void Write(
             Utf8JsonWriter writer,
-            IReadOnlyCollection<Position> coordinateElements,
+            IList<Position> coordinateElements,
             JsonSerializerOptions options)
         {
             writer.WriteStartArray();

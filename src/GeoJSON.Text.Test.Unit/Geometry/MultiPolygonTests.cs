@@ -24,11 +24,11 @@ namespace GeoJSON.Text.Tests.Geometry
 
         private MultiPolygon GetMultiPolygon(double offset = 0.0)
         {
-            var multiPolygon = new MultiPolygon(new List<Polygon>
+            var multiPolygon = new MultiPolygon(new List<PolygonCoordinates>
             {
-                new Polygon(new List<LineString>
+                new PolygonCoordinates(new List<LinearRing>
                 {
-                    new LineString(new List<Position>
+                    new LinearRing(new List<Position>
                     {
                         new Position(52.959676831105995 + offset, -2.6797102391514338 + offset),
                         new Position(52.9608756693609 + offset, -2.6769029474483279 + offset),
@@ -43,9 +43,9 @@ namespace GeoJSON.Text.Tests.Geometry
                         new Position(52.959676831105995 + offset, -2.6797102391514338 + offset)
                     })
                 }),
-                new Polygon(new List<LineString>
+                new PolygonCoordinates(new List<LinearRing>
                 {
-                    new LineString(new List<IPosition>
+                    new LinearRing(new List<Position>
                     {
                         new Position(52.89610842810761 + offset,-2.69628632041613 + offset),
                         new Position(52.8894641454077 + offset,-2.75901233808515 + offset),
@@ -67,9 +67,9 @@ namespace GeoJSON.Text.Tests.Geometry
         public void Can_Serialize()
         {
             // Arrang
-            var polygon1 = new Polygon(new List<LineString>
+            var polygon1 = new PolygonCoordinates(new List<LinearRing>
             {
-                new LineString(new List<Position>
+                new LinearRing(new List<Position>
                 {
                     new Position(0, 0),
                     new Position(0, 1),
@@ -79,9 +79,9 @@ namespace GeoJSON.Text.Tests.Geometry
                 })
             });
 
-            var polygon2 = new Polygon(new List<LineString>
+            var polygon2 = new PolygonCoordinates(new List<LinearRing>
             {
-                new LineString(new List<IPosition>
+                new LinearRing(new List<Position>
                 {
                     new Position(60, 60),
                     new Position(60, 61),
@@ -89,7 +89,7 @@ namespace GeoJSON.Text.Tests.Geometry
                     new Position(61, 60),
                     new Position(60, 60)
                 }),
-                new LineString(new List<IPosition>
+                new LinearRing(new List<Position>
                 {
                     new Position(70, 70),
                     new Position(71, 70),
@@ -99,7 +99,7 @@ namespace GeoJSON.Text.Tests.Geometry
                 })
             });
 
-            var multiPolygon = new MultiPolygon(new List<Polygon> { polygon1, polygon2 });
+            var multiPolygon = new MultiPolygon(new List<PolygonCoordinates> { polygon1, polygon2 });
             var expectedJson = GetExpectedJson();
 
             // Act

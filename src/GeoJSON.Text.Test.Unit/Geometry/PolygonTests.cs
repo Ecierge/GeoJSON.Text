@@ -8,15 +8,17 @@ using NUnit.Framework;
 
 namespace GeoJSON.Text.Tests.Geometry
 {
+    using Geometry = Microsoft.Azure.Cosmos.Spatial.Geometry;
+
     [TestFixture]
     public class PolygonTests : TestBase
     {
         [Test]
         public void Can_Serialize()
         {
-            var polygon = new Polygon(new List<LineString>
+            var polygon = new Polygon(new List<LinearRing>
             {
-                new LineString(new List<Position>
+                new LinearRing(new List<Position>
                 {
                     new Position(52.379790828551016, 5.3173828125),
                     new Position(52.36721467920585, 5.456085205078125),
@@ -34,9 +36,9 @@ namespace GeoJSON.Text.Tests.Geometry
         [Test]
         public void Can_RoundTrip_Geometry()
         {
-            Geometry polygon = new Polygon(new List<LineString>
+            Geometry polygon = new Polygon(new List<LinearRing>
             {
-                new LineString(new List<Position>
+                new LinearRing(new List<Position>
                 {
                     new Position(52.379790828551016, 5.3173828125),
                     new Position(52.36721467920585, 5.456085205078125),
@@ -56,9 +58,9 @@ namespace GeoJSON.Text.Tests.Geometry
         {
             var json = GetExpectedJson();
 
-            var expectedPolygon = new Polygon(new List<LineString>
+            var expectedPolygon = new Polygon(new List<LinearRing>
             {
-                new LineString(new List<Position>
+                new LinearRing(new List<Position>
                 {
                     new Position(34.9895035675793, -84.3228149414063),
                     new Position(35.2198194079344, -84.2912292480469),
@@ -237,7 +239,7 @@ namespace GeoJSON.Text.Tests.Geometry
                     new Position(34.9850031301711, -84.22119140625),
                     new Position(34.9895035675793, -84.3228149414063),
                 }),
-                new LineString(new List<Position>
+                new LinearRing(new List<Position>
                 {
                     new Position(35.7420538306804, -75.6903076171875),
                     new Position(35.7420538306804, -75.5914306640625),
@@ -270,9 +272,9 @@ namespace GeoJSON.Text.Tests.Geometry
         {
             var json = GetExpectedJson();
 
-            var expectedPolygon = new Polygon(new List<LineString>
+            var expectedPolygon = new Polygon(new List<LinearRing>
             {
-                new LineString(new List<Position>
+                new LinearRing(new List<Position>
                 {
                     new Position(52.379790828551016, 5.3173828125),
                     new Position(52.36721467920585, 5.456085205078125),
@@ -317,9 +319,9 @@ namespace GeoJSON.Text.Tests.Geometry
 
         private Polygon GetPolygon(double offset = 0.0)
         {
-            var polygon = new Polygon(new List<LineString>
+            var polygon = new Polygon(new List<LinearRing>
             {
-                new LineString(new List<Position>
+                new LinearRing(new List<Position>
                 {
                     new Position(52.379790828551016 + offset, 5.3173828125 + offset),
                     new Position(52.36721467920585 + offset, 5.456085205078125 + offset),

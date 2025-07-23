@@ -11,12 +11,12 @@ namespace GeoJSON.Text.Tests.Geometry
         [Test]
         public void Can_Serialize()
         {
-            var points = new List<MyPoint>
+            var points = new List<Point>
             {
-                new MyPoint(new Position(52.370725881211314, 4.889259338378906)),
-                new MyPoint(new Position(52.3711451105601, 4.895267486572266)),
-                new MyPoint(new Position(52.36931095278263, 4.892091751098633)),
-                new MyPoint(new Position(52.370725881211314, 4.889259338378906))
+                new Point(new Position(52.370725881211314, 4.889259338378906)),
+                new Point(new Position(52.3711451105601, 4.895267486572266)),
+                new Point(new Position(52.36931095278263, 4.892091751098633)),
+                new Point(new Position(52.370725881211314, 4.889259338378906))
             };
 
             var multiPoint = new MultiPoint(points);
@@ -29,10 +29,10 @@ namespace GeoJSON.Text.Tests.Geometry
         [Test]
         public void Can_Deserialize()
         {
-            var points = new List<MyPoint>
+            var points = new List<Point>
             {
-                new MyPoint(new Position(39.57422, -105.01621)),
-                new MyPoint(new Position(35.0539943, -80.6665134)),
+                new Point(new Position(39.57422, -105.01621)),
+                new Point(new Position(35.0539943, -80.6665134)),
             };
 
             var expectedMultiPoint = new MultiPoint(points);

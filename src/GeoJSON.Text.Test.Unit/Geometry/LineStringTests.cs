@@ -80,9 +80,9 @@ namespace GeoJSON.Text.Tests.Geometry
 
             Assert.AreEqual(expectedLineString, actualLineString);
 
-            Assert.AreEqual(4, actualLineString.Coordinates.Count);
-            Assert.AreEqual(expectedLineString.Coordinates[0].Latitude, actualLineString.Coordinates[0].Latitude);
-            Assert.AreEqual(expectedLineString.Coordinates[0].Longitude, actualLineString.Coordinates[0].Longitude);
+            Assert.AreEqual(4, actualLineString.Positions.Count);
+            Assert.AreEqual(expectedLineString.Positions[0].Latitude, actualLineString.Positions[0].Latitude);
+            Assert.AreEqual(expectedLineString.Positions[0].Longitude, actualLineString.Positions[0].Longitude);
         }
 
         [Test]
@@ -104,9 +104,9 @@ namespace GeoJSON.Text.Tests.Geometry
 
             Assert.AreEqual(expectedLineString, actualLineString);
 
-            Assert.AreEqual(4, actualLineString.Coordinates.Count);
-            Assert.AreEqual(expectedLineString.Coordinates[0].Latitude, actualLineString.Coordinates[0].Latitude);
-            Assert.AreEqual(expectedLineString.Coordinates[0].Longitude, actualLineString.Coordinates[0].Longitude);
+            Assert.AreEqual(4, actualLineString.Positions.Count);
+            Assert.AreEqual(expectedLineString.Positions[0].Latitude, actualLineString.Positions[0].Latitude);
+            Assert.AreEqual(expectedLineString.Positions[0].Longitude, actualLineString.Positions[0].Longitude);
         }
 
         [Test]
@@ -127,11 +127,11 @@ namespace GeoJSON.Text.Tests.Geometry
 
             Assert.AreEqual(expectedLineString, actualLineString);
 
-            Assert.AreEqual(4, actualLineString.Coordinates.Count);
-            Assert.AreEqual(expectedLineString.Coordinates[0].Latitude, actualLineString.Coordinates[0].Latitude);
-            Assert.AreEqual(expectedLineString.Coordinates[0].Longitude, actualLineString.Coordinates[0].Longitude);
-            Assert.AreEqual(expectedLineString.Coordinates[0].Altitude, actualLineString.Coordinates[0].Altitude);
-            Assert.AreEqual(expectedLineString.Coordinates[2].Altitude, actualLineString.Coordinates[2].Altitude);
+            Assert.AreEqual(4, actualLineString.Positions.Count);
+            Assert.AreEqual(expectedLineString.Positions[0].Latitude, actualLineString.Positions[0].Latitude);
+            Assert.AreEqual(expectedLineString.Positions[0].Longitude, actualLineString.Positions[0].Longitude);
+            Assert.AreEqual(expectedLineString.Positions[0].Altitude, actualLineString.Positions[0].Altitude);
+            Assert.AreEqual(expectedLineString.Positions[2].Altitude, actualLineString.Positions[2].Altitude);
         }
 
         [Test]
@@ -151,15 +151,15 @@ namespace GeoJSON.Text.Tests.Geometry
             var options = new JsonSerializerOptions { NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals };
             var actualLineString = JsonSerializer.Deserialize<LineString>(json, options);
 
-            bool b = expectedLineString.Coordinates[0].Equals(actualLineString.Coordinates[0]);
+            bool b = expectedLineString.Positions[0].Equals(actualLineString.Positions[0]);
             Assert.AreEqual(expectedLineString, actualLineString);
 
-            Assert.AreEqual(4, actualLineString.Coordinates.Count);
-            Assert.AreEqual(expectedLineString.Coordinates[0].Latitude, actualLineString.Coordinates[0].Latitude);
-            Assert.AreEqual(expectedLineString.Coordinates[0].Longitude, actualLineString.Coordinates[0].Longitude);
-            Assert.AreEqual(expectedLineString.Coordinates[0].Altitude, actualLineString.Coordinates[0].Altitude);
-            Assert.AreEqual(expectedLineString.Coordinates[1].Altitude, actualLineString.Coordinates[1].Altitude);
-            Assert.AreEqual(expectedLineString.Coordinates[2].Altitude, actualLineString.Coordinates[2].Altitude);
+            Assert.AreEqual(4, actualLineString.Positions.Count);
+            Assert.AreEqual(expectedLineString.Positions[0].Latitude, actualLineString.Positions[0].Latitude);
+            Assert.AreEqual(expectedLineString.Positions[0].Longitude, actualLineString.Positions[0].Longitude);
+            Assert.AreEqual(expectedLineString.Positions[0].Altitude, actualLineString.Positions[0].Altitude);
+            Assert.AreEqual(expectedLineString.Positions[1].Altitude, actualLineString.Positions[1].Altitude);
+            Assert.AreEqual(expectedLineString.Positions[2].Altitude, actualLineString.Positions[2].Altitude);
         }
 
         [Test]
@@ -172,7 +172,7 @@ namespace GeoJSON.Text.Tests.Geometry
         [Test]
         public void Constructor_Null_Coordinates_Throws_Exception()
         {
-            Assert.Throws<ArgumentNullException>(() => new LineString((IEnumerable<IPosition>)null));
+            Assert.Throws<ArgumentNullException>(() => new LineString((IList<Position>)null));
         }
 
         private LineString GetLineString(double offset = 0.0)

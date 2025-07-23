@@ -3,14 +3,15 @@
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using GeoJSON.Text.CoordinateReferenceSystem;
+
+using Microsoft.Azure.Cosmos.Spatial;
 
 namespace GeoJSON.Text.Converters
 {
     /// <summary>
     /// Converts <see cref="ICRSObject"/> types to and from JSON.
     /// </summary>
-    public class CrsConverter : JsonConverter<ICRSObject>
+    public class CrsConverter : JsonConverter<Crs>
     {
         public override bool HandleNull => true;
 
@@ -23,13 +24,13 @@ namespace GeoJSON.Text.Converters
         /// </returns>
         public override bool CanConvert(Type objectType)
         {
-            return typeof(ICRSObject).IsAssignableFromType(objectType);
+            return typeof(Crs).IsAssignableFromType(objectType);
         }
 
         /// <summary>
         /// Reads the JSON representation of the object.
         /// </summary>
-        /// <param name="reader">The <see cref="T:Newtonsoft.Json.JsonReader" /> to read from.</param>
+        /// <param name="reader">The <see cref="T:System.Text.Json.Utf8JsonReader" /> to read from.</param>
         /// <param name="objectType">Type of the object.</param>
         /// <param name="existingValue">The existing value of object being read.</param>
         /// <param name="serializer">The calling serializer.</param>
@@ -41,14 +42,14 @@ namespace GeoJSON.Text.Converters
         ///     or
         /// CRS must have a "type" property
         /// </exception>
-        public override ICRSObject Read(
+        public override Crs Read(
             ref Utf8JsonReader reader,
             Type type,
             JsonSerializerOptions options)
         {
             if (reader.TokenType == JsonTokenType.Null)
             {
-                return new UnspecifiedCRS();
+                return Crs.Unspecified;
             }
             if (reader.TokenType != JsonTokenType.StartObject)
             {
@@ -70,8 +71,8 @@ namespace GeoJSON.Text.Converters
                 {
                     var name = properties.GetProperty("name").GetString();
 
-                    var target = new NamedCRS(name);
-                    var converted = jObject.Deserialize<NamedCRS>();
+                    var target = Crs.Named(name);
+                    var converted = jObject.Deserialize<NamedCrs>();
 
                     if (converted.Properties != null)
                     {
@@ -90,9 +91,9 @@ namespace GeoJSON.Text.Converters
                 {
                     var href = properties.GetProperty("href").GetString();
 
-                    var target = new LinkedCRS(href);
+                    var target = Crs.Linked(href);
 
-                    var converted = jObject.Deserialize<LinkedCRS>();
+                    var converted = jObject.Deserialize<LinkedCrs>();
 
                     if (converted.Properties != null)
                     {
@@ -119,28 +120,28 @@ namespace GeoJSON.Text.Converters
         /// <exception cref="System.ArgumentOutOfRangeException"></exception>
         public override void Write(
             Utf8JsonWriter writer,
-            ICRSObject crsValue,
+            Crs crsValue,
             JsonSerializerOptions options)
         {
-            var value = (ICRSObject)crsValue;
-            
+            var value = (Crs)crsValue;
+
             if(value == null)
                 return;
 
             switch (value.Type)
             {
-                case CRSType.Name:
+                case CrsType.Named:
                     //var nameObject = (NamedCRS)value;
                     //var serializedName = JsonSerializer.Serialize(nameObject, options);
-                    JsonSerializer.Serialize(writer, value, typeof(NamedCRS), options);
+                    JsonSerializer.Serialize(writer, value, typeof(NamedCrs), options);
                     break;
-                case CRSType.Link:
+                case CrsType.Linked:
                     //var linkedObject = (LinkedCRS)value;
                     //var serializedLink = JsonSerializer.Serialize(linkedObject, options);
                     //writer.WriteRawValue(serializedLink);
-                    JsonSerializer.Serialize(writer, value, typeof(LinkedCRS), options);
+                    JsonSerializer.Serialize(writer, value, typeof(LinkedCrs), options);
                     break;
-                case CRSType.Unspecified:
+                case CrsType.Unspecified:
                     writer.WriteNullValue();
                     break;
                 default:

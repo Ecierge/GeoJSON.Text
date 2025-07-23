@@ -41,14 +41,14 @@ namespace GeoJSON.Text.Converters
             JsonSerializerOptions options)
         {
             try
-            { 
+            {
                 if (reader.TokenType != JsonTokenType.StartArray)
                 {
                     throw new ArgumentException("Expected start of array");
                 }
 
                 double lng, lat;
-               // double? alt;
+                double? alt;
 
                 // Read longitude
                 if (!reader.Read())
@@ -107,18 +107,18 @@ namespace GeoJSON.Text.Converters
                 {
                     return new Position(lat, lng);
                 }
-                //else if (reader.TokenType == JsonTokenType.Null)
-                //{
-                //    alt = null;
-                //}
-                //else if (reader.TokenType == JsonTokenType.Number)
-                //{
-                //    alt = reader.GetDouble();
-                //}
-                //else if (reader.TokenType == JsonTokenType.String)
-                //{
-                //    alt = JsonSerializer.Deserialize<double>(ref reader, options);
-                //}
+                else if (reader.TokenType == JsonTokenType.Null)
+                {
+                    alt = null;
+                }
+                else if (reader.TokenType == JsonTokenType.Number)
+                {
+                    alt = reader.GetDouble();
+                }
+                else if (reader.TokenType == JsonTokenType.String)
+                {
+                    alt = JsonSerializer.Deserialize<double>(ref reader, options);
+                }
                 else
                 {
                     throw new ArgumentException("Expected number but got other type");
@@ -158,10 +158,10 @@ namespace GeoJSON.Text.Converters
             writer.WriteNumberValue(coordinates.Longitude);
             writer.WriteNumberValue(coordinates.Latitude);
 
-            //if (coordinates.Altitude.HasValue)
-            //{
-            //    writer.WriteNumberValue(coordinates.Altitude.Value);
-            //}
+            if (coordinates.Altitude.HasValue)
+            {
+                writer.WriteNumberValue(coordinates.Altitude.Value);
+            }
 
             writer.WriteEndArray();
         }
