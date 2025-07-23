@@ -8,6 +8,10 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Geometry\MultiLineStringTests.cs" />
+    <Compile Remove="Geometry\MultiPointTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Geometry\LineStringTests_Can_Deserialize.json" />
     <None Remove="Geometry\LineStringTests_Can_Deserialize_Strings.json" />
     <None Remove="Geometry\LineStringTests_Can_Deserialize_String_Literals.json" />
@@ -22,6 +26,10 @@
     <None Remove="Geometry\PolygonTests_Can_Deserialize.json" />
     <None Remove="Geometry\PolygonTests_Can_Deserialize_With_Exterior_And_Inner_Rings.json" />
     <None Remove="Geometry\PolygonTests_Can_Serialize.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Geometry\MultiLineStringTests.cs" />
+    <None Include="Geometry\MultiPointTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Geometry\LineStringTests_Can_Deserialize.json" />

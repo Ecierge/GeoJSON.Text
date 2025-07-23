@@ -22,12 +22,12 @@ public class GeometryTests : TestBase
         {
             var point = new Point(new Position(1, 2, 3));
 
-            var multiPoint = new MultiPoint(new List<Point>
-            {
-                new Point(new Position(52.379790828551016, 5.3173828125)),
-                new Point(new Position(52.36721467920585, 5.456085205078125)),
-                new Point(new Position(52.303440474272755, 5.386047363281249, 4.23))
-            });
+            //var multiPoint = new MultiPoint(new List<Point>
+            //{
+            //    new Point(new Position(52.379790828551016, 5.3173828125)),
+            //    new Point(new Position(52.36721467920585, 5.456085205078125)),
+            //    new Point(new Position(52.303440474272755, 5.386047363281249, 4.23))
+            //});
 
             var lineString = new LineString(new List<Position>
             {
@@ -36,21 +36,21 @@ public class GeometryTests : TestBase
                 new Position(52.303440474272755, 5.386047363281249, 4.23)
             });
 
-            var multiLineString = new MultiLineString(new List<LineString>
-            {
-                new LineString(new List<Position>
-                {
-                    new Position(52.379790828551016, 5.3173828125),
-                    new Position(52.36721467920585, 5.456085205078125),
-                    new Position(52.303440474272755, 5.386047363281249, 4.23)
-                }),
-                new LineString(new List<Position>
-                {
-                    new Position(52.379790828551016, 5.3273828125),
-                    new Position(52.36721467920585, 5.486085205078125),
-                    new Position(52.303440474272755, 5.426047363281249, 4.23)
-                })
-            });
+            //var multiLineString = new MultiLineString(new List<LineString>
+            //{
+            //    new LineString(new List<Position>
+            //    {
+            //        new Position(52.379790828551016, 5.3173828125),
+            //        new Position(52.36721467920585, 5.456085205078125),
+            //        new Position(52.303440474272755, 5.386047363281249, 4.23)
+            //    }),
+            //    new LineString(new List<Position>
+            //    {
+            //        new Position(52.379790828551016, 5.3273828125),
+            //        new Position(52.36721467920585, 5.486085205078125),
+            //        new Position(52.303440474272755, 5.426047363281249, 4.23)
+            //    })
+            //});
 
             var polygon = new Polygon(new List<LinearRing>
             {
@@ -101,20 +101,20 @@ public class GeometryTests : TestBase
             });
 
             //yield return point;
-            yield return multiPoint;
+            //yield return multiPoint;
             yield return lineString;
-            yield return multiLineString;
+            //yield return multiLineString;
             yield return polygon;
             yield return multiPolygon;
-            yield return new GeometryCollection(new List<Geometry>
-            {
-                //point,
-                multiPoint,
-                lineString,
-                multiLineString,
-                polygon,
-                multiPolygon
-            });
+            //yield return new GeometryCollection(new List<Geometry>
+            //{
+            //    //point,
+            //    multiPoint,
+            //    lineString,
+            //    multiLineString,
+            //    polygon,
+            //    multiPolygon
+            //});
         }
     }
 

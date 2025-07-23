@@ -86,23 +86,21 @@ public class GeometryConverter : JsonConverter<Geometry>
 
         switch (geoJsonType)
         {
-
+            // https://github.com/Azure/azure-cosmos-dotnet-v3/issues/5312
             case GeometryType.Point:
                 return value.Deserialize<Point>(options);
-            case GeometryType.MultiPoint:
-                return value.Deserialize<MultiPoint>(options);
+            //case GeometryType.MultiPoint:
+            //    return value.Deserialize<MultiPoint>(options);
             case GeometryType.LineString:
                 return value.Deserialize<LineString>(options);
-            case GeometryType.MultiLineString:
-                return value.Deserialize<MultiLineString>(options);
+            //case GeometryType.MultiLineString:
+            //    return value.Deserialize<MultiLineString>(options);
             case GeometryType.Polygon:
                 return value.Deserialize<Polygon>(options);
             case GeometryType.MultiPolygon:
                 return value.Deserialize<MultiPolygon>(options);
-            case GeometryType.GeometryCollection:
-                return value.Deserialize<GeometryCollection>(options);
-            case GeometryType.Feature:
-            case GeometryType.FeatureCollection:
+            //case GeometryType.GeometryCollection:
+            //    return value.Deserialize<GeometryCollection>(options);
             default:
                 throw new NotSupportedException("Feature and FeatureCollection types are Feature objects and not Geometry objects");
         }
@@ -122,27 +120,28 @@ public class GeometryConverter : JsonConverter<Geometry>
         // Standard serialization
         switch (value.Type)
         {
+            // https://github.com/Azure/azure-cosmos-dotnet-v3/issues/5312
             case GeometryType.Point:
                 JsonSerializer.Serialize<Point>(writer, (Point)value);
                 break;
-            case GeometryType.MultiPoint:
-                JsonSerializer.Serialize<MultiPoint>(writer, (MultiPoint)value);
-                break;
+            //case GeometryType.MultiPoint:
+            //    JsonSerializer.Serialize<MultiPoint>(writer, (MultiPoint)value);
+            //    break;
             case GeometryType.LineString:
                 JsonSerializer.Serialize<LineString>(writer, (LineString)value);
                 break;
-            case GeometryType.MultiLineString:
-                JsonSerializer.Serialize<MultiLineString>(writer, (MultiLineString)value);
-                break;
+            //case GeometryType.MultiLineString:
+            //    JsonSerializer.Serialize<MultiLineString>(writer, (MultiLineString)value);
+            //    break;
             case GeometryType.Polygon:
                 JsonSerializer.Serialize<Polygon>(writer, (Polygon)value);
                 break;
             case GeometryType.MultiPolygon:
                 JsonSerializer.Serialize<MultiPolygon>(writer, (MultiPolygon)value);
                 break;
-            case GeometryType.GeometryCollection:
-                JsonSerializer.Serialize<GeometryCollection>(writer, (GeometryCollection)value);
-                break;
+            //case GeometryType.GeometryCollection:
+            //    JsonSerializer.Serialize<GeometryCollection>(writer, (GeometryCollection)value);
+            //    break;
             default:
                 throw new NotSupportedException("Feature and FeatureCollection types are Feature objects and not Geometry objects");
         }
