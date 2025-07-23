@@ -9,7 +9,7 @@ using System.Text.Json.Serialization;
 namespace GeoJSON.Text.Converters
 {
     /// <summary>
-    /// Converts <see cref="IGeometryObject"/> types to and from JSON.
+    /// Converts <see cref="Geometry"/> types to and from JSON.
     /// </summary>
     public class BoundingBoxConverter : JsonConverter<double[]>
     {
@@ -46,7 +46,7 @@ namespace GeoJSON.Text.Converters
         /// <summary>
         /// Writes the JSON representation of the object.
         /// </summary>
-        /// <param name="writer">The <see cref="T:Newtonsoft.Json.JsonWriter" /> to write to.</param>
+        /// <param name="writer">The <see cref="T:System.Text.Json.Utf8JsonWriter" /> to write to.</param>
         /// <param name="value">The value.</param>
         /// <param name="serializer">The calling serializer.</param>
         public override void Write(

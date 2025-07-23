@@ -8,19 +8,6 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Feature\FeatureCollectionTests_Can_Deserialize.json" />
-    <None Remove="Feature\FeatureCollectionTests_Can_DeserializeGeneric.json" />
-    <None Remove="Feature\FeatureTests_Can_Deserialize_Point_Feature.json" />
-    <None Remove="Feature\FeatureTests_Can_Serialize_Dictionary_Subclass.json" />
-    <None Remove="Feature\FeatureTests_Can_Serialize_LineString_Feature.json" />
-    <None Remove="Feature\FeatureTests_Can_Serialize_MultiLineString_Feature.json" />
-    <None Remove="Feature\FeatureTests_Can_Serialize_MultiPolygon_Feature.json" />
-    <None Remove="Feature\FeatureTests_Can_Serialize_Point_Feature.json" />
-    <None Remove="Feature\FeatureTests_Can_Serialize_Polygon_Feature.json" />
-    <None Remove="Feature\GenericFeatureTests_Can_Deserialize_LineString_Feature.json" />
-    <None Remove="Feature\GenericFeatureTests_Can_Deserialize_Point_Feature.json" />
-    <None Remove="Feature\GenericFeatureTests_Can_Deserialize_Typed_Point_Feature.json" />
-    <None Remove="Feature\GenericFeatureTests_Can_Serialize_Typed_Point_Feature.json" />
     <None Remove="Geometry\LineStringTests_Can_Deserialize.json" />
     <None Remove="Geometry\LineStringTests_Can_Deserialize_Strings.json" />
     <None Remove="Geometry\LineStringTests_Can_Deserialize_String_Literals.json" />
@@ -37,19 +24,6 @@
     <None Remove="Geometry\PolygonTests_Can_Serialize.json" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Feature\FeatureCollectionTests_Can_Deserialize.json" />
-    <EmbeddedResource Include="Feature\FeatureCollectionTests_Can_DeserializeGeneric.json" />
-    <EmbeddedResource Include="Feature\FeatureTests_Can_Deserialize_Point_Feature.json" />
-    <EmbeddedResource Include="Feature\FeatureTests_Can_Serialize_Dictionary_Subclass.json" />
-    <EmbeddedResource Include="Feature\FeatureTests_Can_Serialize_LineString_Feature.json" />
-    <EmbeddedResource Include="Feature\FeatureTests_Can_Serialize_MultiLineString_Feature.json" />
-    <EmbeddedResource Include="Feature\FeatureTests_Can_Serialize_MultiPolygon_Feature.json" />
-    <EmbeddedResource Include="Feature\FeatureTests_Can_Serialize_Point_Feature.json" />
-    <EmbeddedResource Include="Feature\FeatureTests_Can_Serialize_Polygon_Feature.json" />
-    <EmbeddedResource Include="Feature\GenericFeatureTests_Can_Deserialize_LineString_Feature.json" />
-    <EmbeddedResource Include="Feature\GenericFeatureTests_Can_Deserialize_Point_Feature.json" />
-    <EmbeddedResource Include="Feature\GenericFeatureTests_Can_Deserialize_Typed_Point_Feature.json" />
-    <EmbeddedResource Include="Feature\GenericFeatureTests_Can_Serialize_Typed_Point_Feature.json" />
     <EmbeddedResource Include="Geometry\LineStringTests_Can_Deserialize.json" />
     <EmbeddedResource Include="Geometry\LineStringTests_Can_Deserialize_Strings.json" />
     <EmbeddedResource Include="Geometry\LineStringTests_Can_Deserialize_String_Literals.json" />
@@ -84,9 +58,6 @@
     <EmbeddedResource Include="Geometry\LineStringTests_Can_Deserialize_With_Altitude.json" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Feature\*.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Geometry\*.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
