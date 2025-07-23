@@ -18,11 +18,8 @@ public class MultiPointTests : TestBase
             new Point(new Position(52.36931095278263, 4.892091751098633)),
             new Point(new Position(52.370725881211314, 4.889259338378906))
         };
-
         var multiPoint = new MultiPoint(points);
-
-        var actualJson = JsonSerializer.Serialize(multiPoint);
-
+        var actualJson = JsonSerializer.Serialize(multiPoint, DefaultJsonSerializerOptions);
         JsonAssert.AreEqual(GetExpectedJson(), actualJson);
     }
 
@@ -34,11 +31,9 @@ public class MultiPointTests : TestBase
             new Point(new Position(39.57422, -105.01621)),
             new Point(new Position(35.0539943, -80.6665134)),
         };
-
         var expectedMultiPoint = new MultiPoint(points);
-
         var json = GetExpectedJson();
-        var actualMultiPoint = JsonSerializer.Deserialize<MultiPoint>(json);
+        var actualMultiPoint = JsonSerializer.Deserialize<MultiPoint>(json, DefaultJsonSerializerOptions);
 
         Assert.AreEqual(expectedMultiPoint, actualMultiPoint);
     }

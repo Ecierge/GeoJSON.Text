@@ -26,10 +26,8 @@ public class PolygonTests : TestBase
                 new Position(52.379790828551016, 5.3173828125),
             })
         });
-
         var expectedJson = GetExpectedJson();
-        var actualJson = JsonSerializer.Serialize(polygon);
-
+        var actualJson = JsonSerializer.Serialize(polygon, DefaultJsonSerializerOptions);
         JsonAssert.AreEqual(expectedJson, actualJson);
     }
 
@@ -46,10 +44,8 @@ public class PolygonTests : TestBase
                 new Position(52.379790828551016, 5.3173828125),
             })
         });
-
-        var json = JsonSerializer.Serialize(polygon);
-        var result = JsonSerializer.Deserialize<Geometry>(json);
-
+        var json = JsonSerializer.Serialize(polygon, DefaultJsonSerializerOptions);
+        var result = JsonSerializer.Deserialize<Geometry>(json, DefaultJsonSerializerOptions);
         Assert.AreEqual(result, polygon);
     }
 
@@ -57,7 +53,6 @@ public class PolygonTests : TestBase
     public void Can_Deserialize_With_Exterior_And_Inner_Rings()
     {
         var json = GetExpectedJson();
-
         var expectedPolygon = new Polygon(new List<LinearRing>
         {
             new LinearRing(new List<Position>
@@ -262,8 +257,7 @@ public class PolygonTests : TestBase
                 new Position(35.7420538306804, -75.6903076171875),
             })
         });
-
-        var actualPolygon = JsonSerializer.Deserialize<Polygon>(json);
+        var actualPolygon = JsonSerializer.Deserialize<Polygon>(json, DefaultJsonSerializerOptions);
         Assert.AreEqual(expectedPolygon, actualPolygon);
     }
 
@@ -271,7 +265,6 @@ public class PolygonTests : TestBase
     public void Can_Deserialize()
     {
         var json = GetExpectedJson();
-
         var expectedPolygon = new Polygon(new List<LinearRing>
         {
             new LinearRing(new List<Position>
@@ -282,8 +275,9 @@ public class PolygonTests : TestBase
                 new Position(52.379790828551016, 5.3173828125),
             })
         });
-
-        var actualPolygon = JsonSerializer.Deserialize<Polygon>(json);
+        var actualPolygon = JsonSerializer.Deserialize<Polygon>(json, DefaultJsonSerializerOptions);
+        Assert.AreEqual(expectedPolygon, actualPolygon);
+    }
 
         Assert.AreEqual(expectedPolygon, actualPolygon);
     }

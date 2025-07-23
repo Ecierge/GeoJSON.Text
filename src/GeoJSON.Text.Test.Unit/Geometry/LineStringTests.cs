@@ -54,11 +54,8 @@ public class LineStringTests : TestBase
             new Position(52.36931095278263, 4.892091751098633),
             new Position(52.370725881211314, 4.889259338378906)
         };
-
         var lineString = new LineString(coordinates);
-
-        var actualJson = JsonSerializer.Serialize(lineString);
-
+        var actualJson = JsonSerializer.Serialize(lineString, DefaultJsonSerializerOptions);
         JsonAssert.AreEqual(GetExpectedJson(), actualJson);
     }
 
@@ -72,14 +69,10 @@ public class LineStringTests : TestBase
             new Position(52.36931095278263, 4.892091751098633),
             new Position(52.370725881211314, 4.889259338378906)
         };
-
         var expectedLineString = new LineString(coordinates);
-
         var json = GetExpectedJson();
-        var actualLineString = JsonSerializer.Deserialize<LineString>(json);
-
+        var actualLineString = JsonSerializer.Deserialize<LineString>(json, DefaultJsonSerializerOptions);
         Assert.AreEqual(expectedLineString, actualLineString);
-
         Assert.AreEqual(4, actualLineString.Positions.Count);
         Assert.AreEqual(expectedLineString.Positions[0].Latitude, actualLineString.Positions[0].Latitude);
         Assert.AreEqual(expectedLineString.Positions[0].Longitude, actualLineString.Positions[0].Longitude);
@@ -95,15 +88,14 @@ public class LineStringTests : TestBase
             new Position(52.36931095278263, 4.892091751098633),
             new Position(52.370725881211314, 4.889259338378906)
         };
-
         var expectedLineString = new LineString(coordinates);
-
         var json = GetExpectedJson();
-        var options = new JsonSerializerOptions { NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString };
+        var options = new JsonSerializerOptions(DefaultJsonSerializerOptions)
+        {
+            NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+        };
         var actualLineString = JsonSerializer.Deserialize<LineString>(json, options);
-
         Assert.AreEqual(expectedLineString, actualLineString);
-
         Assert.AreEqual(4, actualLineString.Positions.Count);
         Assert.AreEqual(expectedLineString.Positions[0].Latitude, actualLineString.Positions[0].Latitude);
         Assert.AreEqual(expectedLineString.Positions[0].Longitude, actualLineString.Positions[0].Longitude);
@@ -119,14 +111,10 @@ public class LineStringTests : TestBase
             new Position(52.36931095278263, 4.892091751098633, null),
             new Position(52.370725881211314, 4.889259338378906, 10.2)
         };
-
         var expectedLineString = new LineString(coordinates);
-
         var json = GetExpectedJson();
-        var actualLineString = JsonSerializer.Deserialize<LineString>(json);
-
+        var actualLineString = JsonSerializer.Deserialize<LineString>(json, DefaultJsonSerializerOptions);
         Assert.AreEqual(expectedLineString, actualLineString);
-
         Assert.AreEqual(4, actualLineString.Positions.Count);
         Assert.AreEqual(expectedLineString.Positions[0].Latitude, actualLineString.Positions[0].Latitude);
         Assert.AreEqual(expectedLineString.Positions[0].Longitude, actualLineString.Positions[0].Longitude);
@@ -144,16 +132,15 @@ public class LineStringTests : TestBase
             new Position(52.36931095278263, 4.892091751098633, double.NaN),
             new Position(52.370725881211314, 4.889259338378906, double.NegativeInfinity)
         };
-
         var expectedLineString = new LineString(coordinates);
-
         var json = GetExpectedJson();
-        var options = new JsonSerializerOptions { NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals };
+        var options = new JsonSerializerOptions(DefaultJsonSerializerOptions)
+        {
+            NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals
+        };
         var actualLineString = JsonSerializer.Deserialize<LineString>(json, options);
-
         bool b = expectedLineString.Positions[0].Equals(actualLineString.Positions[0]);
         Assert.AreEqual(expectedLineString, actualLineString);
-
         Assert.AreEqual(4, actualLineString.Positions.Count);
         Assert.AreEqual(expectedLineString.Positions[0].Latitude, actualLineString.Positions[0].Latitude);
         Assert.AreEqual(expectedLineString.Positions[0].Longitude, actualLineString.Positions[0].Longitude);

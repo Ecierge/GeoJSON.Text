@@ -14,11 +14,8 @@ public class MultiPolygonTests : TestBase
     public void Can_Deserialize()
     {
         var json = GetExpectedJson();
-
         var expectMultiPolygon = GetMultiPolygon();
-
-        var actualMultiPolygon = JsonSerializer.Deserialize<MultiPolygon>(json);
-
+        var actualMultiPolygon = JsonSerializer.Deserialize<MultiPolygon>(json, DefaultJsonSerializerOptions);
         Assert.AreEqual(expectMultiPolygon, actualMultiPolygon);
     }
 
@@ -78,7 +75,6 @@ public class MultiPolygonTests : TestBase
                 new Position(0, 0)
             })
         });
-
         var polygon2 = new PolygonCoordinates(new List<LinearRing>
         {
             new LinearRing(new List<Position>
@@ -98,13 +94,10 @@ public class MultiPolygonTests : TestBase
                 new Position(70, 70)
             })
         });
-
         var multiPolygon = new MultiPolygon(new List<PolygonCoordinates> { polygon1, polygon2 });
         var expectedJson = GetExpectedJson();
-
         // Act
-        var actualJson = JsonSerializer.Serialize(multiPolygon);
-
+        var actualJson = JsonSerializer.Serialize(multiPolygon, DefaultJsonSerializerOptions);
         // Assert
         JsonAssert.AreEqual(expectedJson, actualJson);
     }

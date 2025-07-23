@@ -122,10 +122,8 @@ public class GeometryTests : TestBase
     [TestCaseSource(typeof(GeometryTests), nameof(Geometries))]
     public void Can_Serialize_And_Deserialize_Geometry(Geometry geometry)
     {
-        var json = JsonSerializer.Serialize(geometry);
-
-        var deserializedGeometry = JsonSerializer.Deserialize<Geometry>(json);
-
+        var json = JsonSerializer.Serialize(geometry, DefaultJsonSerializerOptions);
+        var deserializedGeometry = JsonSerializer.Deserialize<Geometry>(json, DefaultJsonSerializerOptions);
         Assert.AreEqual(geometry, deserializedGeometry);
     }
 
@@ -133,7 +131,10 @@ public class GeometryTests : TestBase
     [TestCaseSource(typeof(GeometryTests), nameof(Geometries))]
     public void Serialization_Observes_Indenting_Setting_Of_Serializer(Geometry geometry)
     {
-        var options = new JsonSerializerOptions { WriteIndented = true };
+        var options = new JsonSerializerOptions(DefaultJsonSerializerOptions)
+        {
+            WriteIndented = true
+        };
         var json = JsonSerializer.Serialize(geometry, options);
         Assert.IsTrue(json.Contains(Environment.NewLine));
     }
@@ -142,7 +143,11 @@ public class GeometryTests : TestBase
     [TestCaseSource(typeof(GeometryTests), nameof(Geometries))]
     public void Serialization_Observes_No_Indenting_Setting_Of_Serializer(Geometry geometry)
     {
-        var json = JsonSerializer.Serialize(geometry);
+        var options = new JsonSerializerOptions(DefaultJsonSerializerOptions)
+        {
+            WriteIndented = false
+        };
+        var json = JsonSerializer.Serialize(geometry, options);
         Assert.IsFalse(json.Contains(Environment.NewLine));
         Assert.IsFalse(json.Contains(" "));
     }
@@ -152,11 +157,8 @@ public class GeometryTests : TestBase
     public void Can_Serialize_And_Deserialize_Geometry_As_Object_Property(Geometry geometry)
     {
         var classWithGeometry = new ClassWithGeometryProperty(geometry);
-
-        var json = JsonSerializer.Serialize(classWithGeometry);
-
-        var deserializedClassWithGeometry = JsonSerializer.Deserialize<ClassWithGeometryProperty>(json);
-
+        var json = JsonSerializer.Serialize(classWithGeometry, DefaultJsonSerializerOptions);
+        var deserializedClassWithGeometry = JsonSerializer.Deserialize<ClassWithGeometryProperty>(json, DefaultJsonSerializerOptions);
         Assert.AreEqual(classWithGeometry, deserializedClassWithGeometry);
     }
 
@@ -165,23 +167,16 @@ public class GeometryTests : TestBase
     public void Serialized_And_Deserialized_Equals_And_Share_HashCode(Geometry geometry)
     {
         var classWithGeometry = new ClassWithGeometryProperty(geometry);
-
-        var json = JsonSerializer.Serialize(classWithGeometry);
-
-        var deserializedClassWithGeometry = JsonSerializer.Deserialize<ClassWithGeometryProperty>(json);
-
+        var json = JsonSerializer.Serialize(classWithGeometry, DefaultJsonSerializerOptions);
+        var deserializedClassWithGeometry = JsonSerializer.Deserialize<ClassWithGeometryProperty>(json, DefaultJsonSerializerOptions);
         var actual = classWithGeometry;
         var expected = deserializedClassWithGeometry;
-
         Assert.IsTrue(actual.Equals(expected));
         Assert.IsTrue(actual.Equals(actual));
-
         Assert.IsTrue(expected.Equals(actual));
         Assert.IsTrue(expected.Equals(expected));
-
         Assert.IsTrue(classWithGeometry == deserializedClassWithGeometry);
         Assert.IsTrue(deserializedClassWithGeometry == classWithGeometry);
-
         Assert.AreEqual(actual.GetHashCode(), expected.GetHashCode());
     }
 

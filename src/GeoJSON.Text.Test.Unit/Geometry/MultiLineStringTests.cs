@@ -13,7 +13,6 @@ public class MultiLineStringTests : TestBase
     public void Can_Deserialize()
     {
         var json = GetExpectedJson();
-
         var expectedMultiLineString = new MultiLineString(new List<LineString>
         {
             new LineString(new List<Position>
@@ -29,9 +28,7 @@ public class MultiLineStringTests : TestBase
                 new Position(52.303440474272755, 5.426047363281249, 4.23)
             })
         });
-
-        var multiLineString = JsonSerializer.Deserialize<MultiLineString>(json);
-
+        var multiLineString = JsonSerializer.Deserialize<MultiLineString>(json, DefaultJsonSerializerOptions);
         Assert.IsNotNull(multiLineString);
         Assert.AreEqual(expectedMultiLineString, multiLineString);
     }
@@ -54,10 +51,8 @@ public class MultiLineStringTests : TestBase
                 new Position(52.303440474272755, 5.426047363281249, 4.23)
             })
         });
-
         var expectedJson = GetExpectedJson();
-        var actualJson = JsonSerializer.Serialize(expectedMultiLineString);
-
+        var actualJson = JsonSerializer.Serialize(expectedMultiLineString, DefaultJsonSerializerOptions);
         JsonAssert.AreEqual(expectedJson, actualJson);
     }
 

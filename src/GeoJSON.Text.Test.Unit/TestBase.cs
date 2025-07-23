@@ -2,11 +2,34 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 
 namespace GeoJSON.Text.Tests;
 
 public abstract class TestBase
 {
+    protected static readonly JsonSerializerOptions DefaultJsonSerializerOptions = new JsonSerializerOptions
+    {
+        PropertyNameCaseInsensitive = true,
+        WriteIndented = true,
+        AllowTrailingCommas = true,
+        ReadCommentHandling = JsonCommentHandling.Skip,
+        Converters =
+        {
+            new Converters.CrsConverter(),
+            new Converters.CrsRequiredPropertyConverter(),
+            new Converters.JsonStringEnumMemberConverter(),
+            new Converters.BoundingBoxConverter(),
+            new Converters.GeometryConverter(),
+            new Converters.GeometryEnumerableConverter(),
+            new Converters.PointEnumerableConverter(),
+            new Converters.LineStringEnumerableConverter(),
+            new Converters.PolygonEnumerableConverter(),
+            new Converters.PositionConverter(),
+            new Converters.PositionEnumerableConverter(),
+        }
+    };
+
     protected string GetExpectedJson([CallerMemberName] string name = null)
     {
         var names = Assembly.GetExecutingAssembly().GetManifestResourceNames();
