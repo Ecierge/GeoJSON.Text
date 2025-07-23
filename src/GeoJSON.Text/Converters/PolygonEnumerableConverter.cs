@@ -11,90 +11,89 @@ using System.Text.Json.Serialization;
 
 using Microsoft.Azure.Cosmos.Spatial;
 
-namespace GeoJSON.Text.Converters
+namespace GeoJSON.Text.Converters;
+
+/// <summary>
+/// Converter to read and write the <see cref="IEnumerable{MultiPolygon}" /> type.
+/// </summary>
+public class PolygonEnumerableConverter : JsonConverter<IReadOnlyCollection<Polygon>>
 {
+
+    private static readonly LineStringEnumerableConverter PolygonConverter = new LineStringEnumerableConverter();
     /// <summary>
-    /// Converter to read and write the <see cref="IEnumerable{MultiPolygon}" /> type.
+    ///     Determines whether this instance can convert the specified object type.
     /// </summary>
-    public class PolygonEnumerableConverter : JsonConverter<IReadOnlyCollection<Polygon>>
+    /// <param name="objectType">Type of the object.</param>
+    /// <returns>
+    ///     <c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
+    /// </returns>
+    public override bool CanConvert(Type objectType)
+    {
+        return true || typeof(IReadOnlyCollection<Polygon>).IsAssignableFromType(objectType);
+    }
+
+    /// <summary>
+    ///     Reads the JSON representation of the object.
+    /// </summary>
+    /// <param name="reader">The <see cref="T:System.Text.Json.Utf8JsonReader" /> to read from.</param>
+    /// <param name="objectType">Type of the object.</param>
+    /// <param name="existingValue">The existing value of object being read.</param>
+    /// <param name="serializer">The calling serializer.</param>
+    /// <returns>
+    ///     The object value.
+    /// </returns>
+    public override IReadOnlyCollection<Polygon> Read(
+        ref Utf8JsonReader reader,
+        Type type,
+        JsonSerializerOptions options)
     {
 
-        private static readonly LineStringEnumerableConverter PolygonConverter = new LineStringEnumerableConverter();
-        /// <summary>
-        ///     Determines whether this instance can convert the specified object type.
-        /// </summary>
-        /// <param name="objectType">Type of the object.</param>
-        /// <returns>
-        ///     <c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
-        /// </returns>
-        public override bool CanConvert(Type objectType)
+        switch (reader.TokenType)
         {
-            return true || typeof(IReadOnlyCollection<Polygon>).IsAssignableFromType(objectType);
+            case JsonTokenType.Null:
+                return null;
+            case JsonTokenType.StartArray:
+                break;
+            default:
+                throw new InvalidOperationException("Incorrect json type");
         }
 
-        /// <summary>
-        ///     Reads the JSON representation of the object.
-        /// </summary>
-        /// <param name="reader">The <see cref="T:System.Text.Json.Utf8JsonReader" /> to read from.</param>
-        /// <param name="objectType">Type of the object.</param>
-        /// <param name="existingValue">The existing value of object being read.</param>
-        /// <param name="serializer">The calling serializer.</param>
-        /// <returns>
-        ///     The object value.
-        /// </returns>
-        public override IReadOnlyCollection<Polygon> Read(
-            ref Utf8JsonReader reader,
-            Type type,
-            JsonSerializerOptions options)
+        var startDepth = reader.CurrentDepth;
+        var result = new List<Polygon>();
+        while (reader.Read())
         {
-
-            switch (reader.TokenType)
+            if (JsonTokenType.EndArray == reader.TokenType && reader.CurrentDepth == startDepth)
             {
-                case JsonTokenType.Null:
-                    return null;
-                case JsonTokenType.StartArray:
-                    break;
-                default:
-                    throw new InvalidOperationException("Incorrect json type");
+                return new ReadOnlyCollection<Polygon>(result);
             }
-
-            var startDepth = reader.CurrentDepth;
-            var result = new List<Polygon>();
-            while (reader.Read())
+            if (reader.TokenType == JsonTokenType.StartArray)
             {
-                if (JsonTokenType.EndArray == reader.TokenType && reader.CurrentDepth == startDepth)
-                {
-                    return new ReadOnlyCollection<Polygon>(result);
-                }
-                if (reader.TokenType == JsonTokenType.StartArray)
-                {
-                    result.Add(new Polygon(PolygonConverter.Read(
-                        ref reader,
-                        typeof(IEnumerable<LineString>),
-                        options)));
-                }
+                result.Add(new Polygon(PolygonConverter.Read(
+                    ref reader,
+                    typeof(IEnumerable<LineString>),
+                    options)));
             }
-
-            throw new JsonException($"expected null, object or array token but received {reader.TokenType}");
         }
 
-        /// <summary>
-        ///     Writes the JSON representation of the object.
-        /// </summary>
-        /// <param name="writer">The <see cref="T:System.Text.Json.Utf8JsonWriter" /> to write to.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="serializer">The calling serializer.</param>
-        public override void Write(
-            Utf8JsonWriter writer,
-            IReadOnlyCollection<Polygon> value,
-            JsonSerializerOptions options)
+        throw new JsonException($"expected null, object or array token but received {reader.TokenType}");
+    }
+
+    /// <summary>
+    ///     Writes the JSON representation of the object.
+    /// </summary>
+    /// <param name="writer">The <see cref="T:System.Text.Json.Utf8JsonWriter" /> to write to.</param>
+    /// <param name="value">The value.</param>
+    /// <param name="serializer">The calling serializer.</param>
+    public override void Write(
+        Utf8JsonWriter writer,
+        IReadOnlyCollection<Polygon> value,
+        JsonSerializerOptions options)
+    {
+        writer.WriteStartArray();
+        foreach (var polygon in value)
         {
-            writer.WriteStartArray();
-            foreach (var polygon in value)
-            {
-                PolygonConverter.Write(writer, polygon.Positions, options);
-            }
-            writer.WriteEndArray();
+            PolygonConverter.Write(writer, polygon.Rings, options);
         }
+        writer.WriteEndArray();
     }
 }

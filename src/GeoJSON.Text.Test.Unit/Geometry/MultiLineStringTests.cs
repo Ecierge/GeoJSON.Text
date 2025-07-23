@@ -4,113 +4,112 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Text.Json;
 
-namespace GeoJSON.Text.Tests.Geometry
+namespace GeoJSON.Text.Tests.Geometry;
+
+[TestFixture]
+public class MultiLineStringTests : TestBase
 {
-    [TestFixture]
-    public class MultiLineStringTests : TestBase
+    [Test]
+    public void Can_Deserialize()
     {
-        [Test]
-        public void Can_Deserialize()
+        var json = GetExpectedJson();
+
+        var expectedMultiLineString = new MultiLineString(new List<LineString>
         {
-            var json = GetExpectedJson();
-
-            var expectedMultiLineString = new MultiLineString(new List<LineString>
+            new LineString(new List<Position>
             {
-                new LineString(new List<Position>
-                {
-                    new Position(52.379790828551016, 5.3173828125),
-                    new Position(52.36721467920585, 5.456085205078125),
-                    new Position(52.303440474272755, 5.386047363281249, 4.23)
-                }),
-                new LineString(new List<Position>
-                {
-                    new Position(52.379790828551016, 5.3273828125),
-                    new Position(52.36721467920585, 5.486085205078125),
-                    new Position(52.303440474272755, 5.426047363281249, 4.23)
-                })
-            });
+                new Position(52.379790828551016, 5.3173828125),
+                new Position(52.36721467920585, 5.456085205078125),
+                new Position(52.303440474272755, 5.386047363281249, 4.23)
+            }),
+            new LineString(new List<Position>
+            {
+                new Position(52.379790828551016, 5.3273828125),
+                new Position(52.36721467920585, 5.486085205078125),
+                new Position(52.303440474272755, 5.426047363281249, 4.23)
+            })
+        });
 
-            var multiLineString = JsonSerializer.Deserialize<MultiLineString>(json);
+        var multiLineString = JsonSerializer.Deserialize<MultiLineString>(json);
 
-            Assert.IsNotNull(multiLineString);
-            Assert.AreEqual(expectedMultiLineString, multiLineString);
+        Assert.IsNotNull(multiLineString);
+        Assert.AreEqual(expectedMultiLineString, multiLineString);
+    }
+
+    [Test]
+    public void Can_Serialize()
+    {
+        var expectedMultiLineString = new MultiLineString(new List<LineString>
+        {
+            new LineString(new List<Position>
+            {
+                new Position(52.379790828551016, 5.3173828125),
+                new Position(52.36721467920585, 5.456085205078125),
+                new Position(52.303440474272755, 5.386047363281249, 4.23)
+            }),
+            new LineString(new List<Position>
+            {
+                new Position(52.379790828551016, 5.3273828125),
+                new Position(52.36721467920585, 5.486085205078125),
+                new Position(52.303440474272755, 5.426047363281249, 4.23)
+            })
+        });
+
+        var expectedJson = GetExpectedJson();
+        var actualJson = JsonSerializer.Serialize(expectedMultiLineString);
+
+        JsonAssert.AreEqual(expectedJson, actualJson);
+    }
+
+    private LineString GetLineString(double offset = 0.0)
+    {
+        var coordinates = new List<Position>
+        {
+            new Position(52.379790828551016 + offset, 5.3173828125 + offset),
+            new Position(52.36721467920585 + offset, 5.456085205078125 + offset),
+            new Position(52.303440474272755 + offset, 5.386047363281249 + offset, 4.23 + offset)
+        };
+        var lineString = new LineString(coordinates);
+        return lineString;
+    }
+
+    [Test]
+    public void Equals_GetHashCode_Contract()
+    {
+        var rnd = new System.Random();
+        var offset = rnd.NextDouble() * 60;
+        if (rnd.NextDouble() < 0.5)
+        {
+            offset *= -1;
         }
 
-        [Test]
-        public void Can_Serialize()
+        var leftLine = new List<LineString>
         {
-            var expectedMultiLineString = new MultiLineString(new List<LineString>
-            {
-                new LineString(new List<Position>
-                {
-                    new Position(52.379790828551016, 5.3173828125),
-                    new Position(52.36721467920585, 5.456085205078125),
-                    new Position(52.303440474272755, 5.386047363281249, 4.23)
-                }),
-                new LineString(new List<Position>
-                {
-                    new Position(52.379790828551016, 5.3273828125),
-                    new Position(52.36721467920585, 5.486085205078125),
-                    new Position(52.303440474272755, 5.426047363281249, 4.23)
-                })
-            });
+            GetLineString(offset + 1),
+            GetLineString(offset + 2)
+        };
 
-            var expectedJson = GetExpectedJson();
-            var actualJson = JsonSerializer.Serialize(expectedMultiLineString);
+        var left = new MultiLineString(leftLine);
 
-            JsonAssert.AreEqual(expectedJson, actualJson);
-        }
-
-        private LineString GetLineString(double offset = 0.0)
+        var rightLine = new List<LineString>
         {
-            var coordinates = new List<Position>
-            {
-                new Position(52.379790828551016 + offset, 5.3173828125 + offset),
-                new Position(52.36721467920585 + offset, 5.456085205078125 + offset),
-                new Position(52.303440474272755 + offset, 5.386047363281249 + offset, 4.23 + offset)
-            };
-            var lineString = new LineString(coordinates);
-            return lineString;
-        }
+            GetLineString(offset + 1),
+            GetLineString(offset + 2)
+        };
 
-        [Test]
-        public void Equals_GetHashCode_Contract()
-        {
-            var rnd = new System.Random();
-            var offset = rnd.NextDouble() * 60;
-            if (rnd.NextDouble() < 0.5)
-            {
-                offset *= -1;
-            }
+        var right = new MultiLineString(rightLine);
 
-            var leftLine = new List<LineString>
-            {
-                GetLineString(offset + 1),
-                GetLineString(offset + 2)
-            };
+        Assert.AreEqual(left, right);
+        Assert.AreEqual(right, left);
 
-            var left = new MultiLineString(leftLine);
+        Assert.IsTrue(left.Equals(right));
+        Assert.IsTrue(left.Equals(left));
+        Assert.IsTrue(right.Equals(left));
+        Assert.IsTrue(right.Equals(right));
 
-            var rightLine = new List<LineString>
-            {
-                GetLineString(offset + 1),
-                GetLineString(offset + 2)
-            };
+        Assert.IsTrue(left == right);
+        Assert.IsTrue(right == left);
 
-            var right = new MultiLineString(rightLine);
-
-            Assert.AreEqual(left, right);
-            Assert.AreEqual(right, left);
-
-            Assert.IsTrue(left.Equals(right));
-            Assert.IsTrue(left.Equals(left));
-            Assert.IsTrue(right.Equals(left));
-            Assert.IsTrue(right.Equals(right));
-
-            Assert.IsTrue(left == right);
-            Assert.IsTrue(right == left);
-
-            Assert.AreEqual(left.GetHashCode(), right.GetHashCode());
-        }
+        Assert.AreEqual(left.GetHashCode(), right.GetHashCode());
     }
 }

@@ -9,245 +9,244 @@ using Microsoft.Azure.Cosmos.Spatial;
 
 using NUnit.Framework;
 
-namespace GeoJSON.Text.Tests.Geometry
+namespace GeoJSON.Text.Tests.Geometry;
+
+using Geometry = Microsoft.Azure.Cosmos.Spatial.Geometry;
+
+[TestFixture]
+public class GeometryTests : TestBase
 {
-    using Geometry = Microsoft.Azure.Cosmos.Spatial.Geometry;
-
-    [TestFixture]
-    public class GeometryTests : TestBase
+    public static IEnumerable<Geometry> Geometries
     {
-        public static IEnumerable<Geometry> Geometries
+        get
         {
-            get
+            var point = new Point(new Position(1, 2, 3));
+
+            var multiPoint = new MultiPoint(new List<Point>
             {
-                var point = new Point(new Position(1, 2, 3));
+                new Point(new Position(52.379790828551016, 5.3173828125)),
+                new Point(new Position(52.36721467920585, 5.456085205078125)),
+                new Point(new Position(52.303440474272755, 5.386047363281249, 4.23))
+            });
 
-                var multiPoint = new MultiPoint(new List<Point>
-                {
-                    new Point(new Position(52.379790828551016, 5.3173828125)),
-                    new Point(new Position(52.36721467920585, 5.456085205078125)),
-                    new Point(new Position(52.303440474272755, 5.386047363281249, 4.23))
-                });
+            var lineString = new LineString(new List<Position>
+            {
+                new Position(52.379790828551016, 5.3173828125),
+                new Position(52.36721467920585, 5.456085205078125),
+                new Position(52.303440474272755, 5.386047363281249, 4.23)
+            });
 
-                var lineString = new LineString(new List<Position>
+            var multiLineString = new MultiLineString(new List<LineString>
+            {
+                new LineString(new List<Position>
                 {
                     new Position(52.379790828551016, 5.3173828125),
                     new Position(52.36721467920585, 5.456085205078125),
                     new Position(52.303440474272755, 5.386047363281249, 4.23)
-                });
-
-                var multiLineString = new MultiLineString(new List<LineString>
+                }),
+                new LineString(new List<Position>
                 {
-                    new LineString(new List<Position>
+                    new Position(52.379790828551016, 5.3273828125),
+                    new Position(52.36721467920585, 5.486085205078125),
+                    new Position(52.303440474272755, 5.426047363281249, 4.23)
+                })
+            });
+
+            var polygon = new Polygon(new List<LinearRing>
+            {
+                new LinearRing(new List<Position>
+                {
+                    new Position(52.379790828551016, 5.3173828125),
+                    new Position(52.36721467920585, 5.456085205078125),
+                    new Position(52.303440474272755, 5.386047363281249, 4.23),
+                    new Position(52.379790828551016, 5.3173828125)
+                })
+            });
+
+            var multiPolygon = new MultiPolygon(new List<PolygonCoordinates>
+            {
+                new PolygonCoordinates(new List<LinearRing>
+                {
+                    new LinearRing(new List<Position>
                     {
-                        new Position(52.379790828551016, 5.3173828125),
-                        new Position(52.36721467920585, 5.456085205078125),
-                        new Position(52.303440474272755, 5.386047363281249, 4.23)
-                    }),
-                    new LineString(new List<Position>
-                    {
-                        new Position(52.379790828551016, 5.3273828125),
-                        new Position(52.36721467920585, 5.486085205078125),
-                        new Position(52.303440474272755, 5.426047363281249, 4.23)
+                        new Position(52.959676831105995, -2.6797102391514338),
+                        new Position(52.9608756693609, -2.6769029474483279),
+                        new Position(52.908449372833715, -2.6079763270327119),
+                        new Position(52.891287242948195, -2.5815104708998668),
+                        new Position(52.875476700983896, -2.5851645010668989),
+                        new Position(52.882954723868622, -2.6050779098387191),
+                        new Position(52.875255907042678, -2.6373482332006359),
+                        new Position(52.878791122091066, -2.6932445076063951),
+                        new Position(52.89564268523565, -2.6931334629377890),
+                        new Position(52.930592009390175, -2.6548779332193022),
+                        new Position(52.959676831105995, -2.6797102391514338)
                     })
-                });
-
-                var polygon = new Polygon(new List<LineString>
+                }),
+                new PolygonCoordinates(new List<LinearRing>
                 {
-                    new LineString(new List<Position>
+                    new LinearRing(new List<Position>
                     {
-                        new Position(52.379790828551016, 5.3173828125),
-                        new Position(52.36721467920585, 5.456085205078125),
-                        new Position(52.303440474272755, 5.386047363281249, 4.23),
-                        new Position(52.379790828551016, 5.3173828125)
+                        new Position(52.89610842810761, -2.69628632041613),
+                        new Position(52.8894641454077, -2.75901233808515),
+                        new Position(52.89938894657412, -2.7663172788742449),
+                        new Position(52.90253773227807, -2.804554822840895),
+                        new Position(52.929801009654575, -2.83848602260174),
+                        new Position(52.94013913205788, -2.838979264607087),
+                        new Position(52.937353122653533, -2.7978187468478741),
+                        new Position(52.920394929466184, -2.772273870352612),
+                        new Position(52.926572918779222, -2.6996509024137052),
+                        new Position(52.89610842810761, -2.69628632041613)
                     })
-                });
+                })
+            });
 
-                var multiPolygon = new MultiPolygon(new List<Polygon>
-                {
-                    new Polygon(new List<LineString>
-                    {
-                        new LineString(new List<Position>
-                        {
-                            new Position(52.959676831105995, -2.6797102391514338),
-                            new Position(52.9608756693609, -2.6769029474483279),
-                            new Position(52.908449372833715, -2.6079763270327119),
-                            new Position(52.891287242948195, -2.5815104708998668),
-                            new Position(52.875476700983896, -2.5851645010668989),
-                            new Position(52.882954723868622, -2.6050779098387191),
-                            new Position(52.875255907042678, -2.6373482332006359),
-                            new Position(52.878791122091066, -2.6932445076063951),
-                            new Position(52.89564268523565, -2.6931334629377890),
-                            new Position(52.930592009390175, -2.6548779332193022),
-                            new Position(52.959676831105995, -2.6797102391514338)
-                        })
-                    }),
-                    new Polygon(new List<LineString>
-                    {
-                        new LineString(new List<Position>
-                        {
-                            new Position(52.89610842810761, -2.69628632041613),
-                            new Position(52.8894641454077, -2.75901233808515),
-                            new Position(52.89938894657412, -2.7663172788742449),
-                            new Position(52.90253773227807, -2.804554822840895),
-                            new Position(52.929801009654575, -2.83848602260174),
-                            new Position(52.94013913205788, -2.838979264607087),
-                            new Position(52.937353122653533, -2.7978187468478741),
-                            new Position(52.920394929466184, -2.772273870352612),
-                            new Position(52.926572918779222, -2.6996509024137052),
-                            new Position(52.89610842810761, -2.69628632041613)
-                        })
-                    })
-                });
+            //yield return point;
+            yield return multiPoint;
+            yield return lineString;
+            yield return multiLineString;
+            yield return polygon;
+            yield return multiPolygon;
+            yield return new GeometryCollection(new List<Geometry>
+            {
+                //point,
+                multiPoint,
+                lineString,
+                multiLineString,
+                polygon,
+                multiPolygon
+            });
+        }
+    }
 
-                //yield return point;
-                yield return multiPoint;
-                yield return lineString;
-                yield return multiLineString;
-                yield return polygon;
-                yield return multiPolygon;
-                yield return new GeometryCollection(new List<Geometry>
-                {
-                    //point,
-                    multiPoint,
-                    lineString,
-                    multiLineString,
-                    polygon,
-                    multiPolygon
-                });
-            }
+    [Test]
+    [TestCaseSource(typeof(GeometryTests), nameof(Geometries))]
+    public void Can_Serialize_And_Deserialize_Geometry(Geometry geometry)
+    {
+        var json = JsonSerializer.Serialize(geometry);
+
+        var deserializedGeometry = JsonSerializer.Deserialize<Geometry>(json);
+
+        Assert.AreEqual(geometry, deserializedGeometry);
+    }
+
+    [Test]
+    [TestCaseSource(typeof(GeometryTests), nameof(Geometries))]
+    public void Serialization_Observes_Indenting_Setting_Of_Serializer(Geometry geometry)
+    {
+        var options = new JsonSerializerOptions { WriteIndented = true };
+        var json = JsonSerializer.Serialize(geometry, options);
+        Assert.IsTrue(json.Contains(Environment.NewLine));
+    }
+
+    [Test]
+    [TestCaseSource(typeof(GeometryTests), nameof(Geometries))]
+    public void Serialization_Observes_No_Indenting_Setting_Of_Serializer(Geometry geometry)
+    {
+        var json = JsonSerializer.Serialize(geometry);
+        Assert.IsFalse(json.Contains(Environment.NewLine));
+        Assert.IsFalse(json.Contains(" "));
+    }
+
+    [Test]
+    [TestCaseSource(typeof(GeometryTests), nameof(Geometries))]
+    public void Can_Serialize_And_Deserialize_Geometry_As_Object_Property(Geometry geometry)
+    {
+        var classWithGeometry = new ClassWithGeometryProperty(geometry);
+
+        var json = JsonSerializer.Serialize(classWithGeometry);
+
+        var deserializedClassWithGeometry = JsonSerializer.Deserialize<ClassWithGeometryProperty>(json);
+
+        Assert.AreEqual(classWithGeometry, deserializedClassWithGeometry);
+    }
+
+    [Test]
+    [TestCaseSource(typeof(GeometryTests), nameof(Geometries))]
+    public void Serialized_And_Deserialized_Equals_And_Share_HashCode(Geometry geometry)
+    {
+        var classWithGeometry = new ClassWithGeometryProperty(geometry);
+
+        var json = JsonSerializer.Serialize(classWithGeometry);
+
+        var deserializedClassWithGeometry = JsonSerializer.Deserialize<ClassWithGeometryProperty>(json);
+
+        var actual = classWithGeometry;
+        var expected = deserializedClassWithGeometry;
+
+        Assert.IsTrue(actual.Equals(expected));
+        Assert.IsTrue(actual.Equals(actual));
+
+        Assert.IsTrue(expected.Equals(actual));
+        Assert.IsTrue(expected.Equals(expected));
+
+        Assert.IsTrue(classWithGeometry == deserializedClassWithGeometry);
+        Assert.IsTrue(deserializedClassWithGeometry == classWithGeometry);
+
+        Assert.AreEqual(actual.GetHashCode(), expected.GetHashCode());
+    }
+
+    internal class ClassWithGeometryProperty
+    {
+        public ClassWithGeometryProperty(Geometry geometry)
+        {
+            Geometry = geometry;
         }
 
-        [Test]
-        [TestCaseSource(typeof(GeometryTests), nameof(Geometries))]
-        public void Can_Serialize_And_Deserialize_Geometry(Geometry geometry)
+        [JsonConverter(typeof(GeometryConverter))]
+        public Geometry Geometry { get; set; }
+
+        /// <summary>
+        ///     Determines whether the specified <see cref="T:System.Object" /> is equal to the current
+        ///     <see cref="T:System.Object" />.
+        /// </summary>
+        /// <returns>
+        ///     true if the specified object  is equal to the current object; otherwise, false.
+        /// </returns>
+        /// <param name="obj">The object to compare with the current object. </param>
+        public override bool Equals(object obj)
         {
-            var json = JsonSerializer.Serialize(geometry);
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
 
-            var deserializedGeometry = JsonSerializer.Deserialize<Geometry>(json);
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
 
-            Assert.AreEqual(geometry, deserializedGeometry);
+            if (obj.GetType() != GetType())
+            {
+                return false;
+            }
+
+            return Equals((ClassWithGeometryProperty)obj);
         }
 
-        [Test]
-        [TestCaseSource(typeof(GeometryTests), nameof(Geometries))]
-        public void Serialization_Observes_Indenting_Setting_Of_Serializer(Geometry geometry)
+        /// <summary>
+        ///     Serves as a hash function for a particular type.
+        /// </summary>
+        /// <returns>
+        ///     A hash code for the current <see cref="T:System.Object" />.
+        /// </returns>
+        public override int GetHashCode()
         {
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            var json = JsonSerializer.Serialize(geometry, options);
-            Assert.IsTrue(json.Contains(Environment.NewLine));
+            return Geometry.GetHashCode();
         }
 
-        [Test]
-        [TestCaseSource(typeof(GeometryTests), nameof(Geometries))]
-        public void Serialization_Observes_No_Indenting_Setting_Of_Serializer(Geometry geometry)
+        public static bool operator ==(ClassWithGeometryProperty left, ClassWithGeometryProperty right)
         {
-            var json = JsonSerializer.Serialize(geometry);
-            Assert.IsFalse(json.Contains(Environment.NewLine));
-            Assert.IsFalse(json.Contains(" "));
+            return Equals(left, right);
         }
 
-        [Test]
-        [TestCaseSource(typeof(GeometryTests), nameof(Geometries))]
-        public void Can_Serialize_And_Deserialize_Geometry_As_Object_Property(Geometry geometry)
+        public static bool operator !=(ClassWithGeometryProperty left, ClassWithGeometryProperty right)
         {
-            var classWithGeometry = new ClassWithGeometryProperty(geometry);
-
-            var json = JsonSerializer.Serialize(classWithGeometry);
-
-            var deserializedClassWithGeometry = JsonSerializer.Deserialize<ClassWithGeometryProperty>(json);
-
-            Assert.AreEqual(classWithGeometry, deserializedClassWithGeometry);
+            return !Equals(left, right);
         }
 
-        [Test]
-        [TestCaseSource(typeof(GeometryTests), nameof(Geometries))]
-        public void Serialized_And_Deserialized_Equals_And_Share_HashCode(Geometry geometry)
+        private bool Equals(ClassWithGeometryProperty other)
         {
-            var classWithGeometry = new ClassWithGeometryProperty(geometry);
-
-            var json = JsonSerializer.Serialize(classWithGeometry);
-
-            var deserializedClassWithGeometry = JsonSerializer.Deserialize<ClassWithGeometryProperty>(json);
-
-            var actual = classWithGeometry;
-            var expected = deserializedClassWithGeometry;
-
-            Assert.IsTrue(actual.Equals(expected));
-            Assert.IsTrue(actual.Equals(actual));
-
-            Assert.IsTrue(expected.Equals(actual));
-            Assert.IsTrue(expected.Equals(expected));
-
-            Assert.IsTrue(classWithGeometry == deserializedClassWithGeometry);
-            Assert.IsTrue(deserializedClassWithGeometry == classWithGeometry);
-
-            Assert.AreEqual(actual.GetHashCode(), expected.GetHashCode());
-        }
-
-        internal class ClassWithGeometryProperty
-        {
-            public ClassWithGeometryProperty(Geometry geometry)
-            {
-                Geometry = geometry;
-            }
-
-            [JsonConverter(typeof(GeometryConverter))]
-            public Geometry Geometry { get; set; }
-
-            /// <summary>
-            ///     Determines whether the specified <see cref="T:System.Object" /> is equal to the current
-            ///     <see cref="T:System.Object" />.
-            /// </summary>
-            /// <returns>
-            ///     true if the specified object  is equal to the current object; otherwise, false.
-            /// </returns>
-            /// <param name="obj">The object to compare with the current object. </param>
-            public override bool Equals(object obj)
-            {
-                if (ReferenceEquals(null, obj))
-                {
-                    return false;
-                }
-
-                if (ReferenceEquals(this, obj))
-                {
-                    return true;
-                }
-
-                if (obj.GetType() != GetType())
-                {
-                    return false;
-                }
-
-                return Equals((ClassWithGeometryProperty)obj);
-            }
-
-            /// <summary>
-            ///     Serves as a hash function for a particular type.
-            /// </summary>
-            /// <returns>
-            ///     A hash code for the current <see cref="T:System.Object" />.
-            /// </returns>
-            public override int GetHashCode()
-            {
-                return Geometry.GetHashCode();
-            }
-
-            public static bool operator ==(ClassWithGeometryProperty left, ClassWithGeometryProperty right)
-            {
-                return Equals(left, right);
-            }
-
-            public static bool operator !=(ClassWithGeometryProperty left, ClassWithGeometryProperty right)
-            {
-                return !Equals(left, right);
-            }
-
-            private bool Equals(ClassWithGeometryProperty other)
-            {
-                return Geometry.Equals(other.Geometry);
-            }
+            return Geometry.Equals(other.Geometry);
         }
     }
 }
