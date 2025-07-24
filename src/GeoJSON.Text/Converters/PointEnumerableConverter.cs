@@ -12,13 +12,20 @@ namespace GeoJSON.Text.Converters;
 /// <summary>
 /// Converter to read and write the <see cref="IEnumerable{Point}" /> type.
 /// </summary>
-public class PointEnumerableConverter : JsonConverter<ReadOnlyCollection<Point>>
+public class PointEnumerableConverter : JsonConverter<IList<Point>>
 {
     private static readonly PositionConverter PositionConverter = new PositionConverter();
+
+    /// <inheritdoc />
+    public override bool CanConvert(Type objectType)
+    {
+        return objectType.IsAssignableFrom(typeof(IList<Point>));
+    }
+
     /// <inheritdoc />
     public override void Write(
         Utf8JsonWriter writer,
-        ReadOnlyCollection<Point> value,
+        IList<Point> value,
         JsonSerializerOptions options)
     {
         writer.WriteStartArray();
@@ -30,7 +37,7 @@ public class PointEnumerableConverter : JsonConverter<ReadOnlyCollection<Point>>
     }
 
     /// <inheritdoc />
-    public override ReadOnlyCollection<Point> Read(
+    public override IList<Point> Read(
         ref Utf8JsonReader reader,
         Type type,
         JsonSerializerOptions options)
@@ -53,17 +60,17 @@ public class PointEnumerableConverter : JsonConverter<ReadOnlyCollection<Point>>
         {
             if (JsonTokenType.EndArray == reader.TokenType && reader.CurrentDepth == startDepth)
             {
-                return new ReadOnlyCollection<Point>(result);
+                return result;
             }
-            //if(JsonTokenType.EndArray == reader.TokenType)
-            //{
-            //    result.Add(new Point(numbers.ToPosition()));
+            if (JsonTokenType.EndArray == reader.TokenType)
+            {
+                result.Add(new Point(numbers.ToPosition()));
 
-            //    // We have finished reading this internal point array, clear so we can read next (If needed)
-            //    numbers.Clear();
-            //}
-            if(reader.TokenType == JsonTokenType.Number)
-            {  
+                // We have finished reading this internal point array, clear so we can read next (If needed)
+                numbers.Clear();
+            }
+            if (reader.TokenType == JsonTokenType.Number)
+            {
                 var position = new Position(numbers.ToArray());
                 var point = ConvertToCosmosPosition(position);
                 result.Add(point);
@@ -74,11 +81,6 @@ public class PointEnumerableConverter : JsonConverter<ReadOnlyCollection<Point>>
         throw new JsonException($"expected null, object or array token but received {reader.TokenType}");
     }
 
-    /// <inheritdoc />
-    public override bool CanConvert(Type objectType)
-    {
-        return objectType == typeof(ReadOnlyCollection<Point>);
-    }
     // Add a helper method to convert GeoJSON.Text.Geometry.Position to Microsoft.Azure.Cosmos.Spatial.Position
     private static Point ConvertToCosmosPosition(Position position)
     {

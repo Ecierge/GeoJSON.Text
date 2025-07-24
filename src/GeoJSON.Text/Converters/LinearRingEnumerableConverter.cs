@@ -12,32 +12,17 @@ namespace GeoJSON.Text.Converters;
 /// <summary>
 /// Converter to read and write the <see cref="IList{LinearRing}" /> type.
 /// </summary>
-public class LineStringEnumerableConverter : JsonConverter<IList<LinearRing>>
+public class LinearRingEnumerableConverter : JsonConverter<IList<LinearRing>>
 {
     private static readonly PositionEnumerableConverter LineStringConverter = new PositionEnumerableConverter();
 
-    /// <summary>
-    /// Determines whether this instance can convert the specified object type.
-    /// </summary>
-    /// <param name="objectType">Type of the object.</param>
-    /// <returns>
-    /// <c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
-    /// </returns>
+    /// <inheritdoc/>
     public override bool CanConvert(Type objectType)
     {
-        return typeof(IReadOnlyCollection<LineString>).IsAssignableFromType(objectType);
+        return objectType.IsAssignableFrom(typeof(IList<LinearRing>));
     }
 
-    /// <summary>
-    /// Reads the JSON representation of the object.
-    /// </summary>
-    /// <param name="reader">The <see cref="T:System.Text.Json.Utf8JsonReader" /> to read from.</param>
-    /// <param name="objectType">Type of the object.</param>
-    /// <param name="existingValue">The existing value of object being read.</param>
-    /// <param name="serializer">The calling serializer.</param>
-    /// <returns>
-    /// The object value.
-    /// </returns>
+    /// <inheritdoc/>
     public override IList<LinearRing> Read(
         ref Utf8JsonReader reader,
         Type type,
@@ -73,12 +58,7 @@ public class LineStringEnumerableConverter : JsonConverter<IList<LinearRing>>
         throw new JsonException($"expected null, object or array token but received {reader.TokenType}");
     }
 
-    /// <summary>
-    /// Writes the JSON representation of the object.
-    /// </summary>
-    /// <param name="writer">The <see cref="T:System.Text.Json.Utf8JsonWriter" /> to write to.</param>
-    /// <param name="value">The value.</param>
-    /// <param name="serializer">The calling serializer.</param>
+    /// <inheritdoc/>
     public override void Write(
         Utf8JsonWriter writer,
         IList<LinearRing> value,

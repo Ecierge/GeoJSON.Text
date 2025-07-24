@@ -17,14 +17,17 @@ public abstract class TestBase
         Converters =
         {
             new Converters.CrsConverter(),
-            new Converters.CrsRequiredPropertyConverter(),
             new Converters.JsonStringEnumMemberConverter(),
             new Converters.BoundingBoxConverter(),
             new Converters.GeometryConverter(),
             new Converters.GeometryEnumerableConverter(),
             new Converters.PointEnumerableConverter(),
-            new Converters.LineStringEnumerableConverter(),
+            new Converters.LineStringConverter(),
+            new Converters.LinearRingEnumerableConverter(),
+            new Converters.PointConverter(),
+            new Converters.PolygonConverter(),
             new Converters.PolygonEnumerableConverter(),
+            new Converters.MultiPolygonConverter(),
             new Converters.PositionConverter(),
             new Converters.PositionEnumerableConverter(),
         }

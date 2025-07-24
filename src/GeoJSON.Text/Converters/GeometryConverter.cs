@@ -15,28 +15,13 @@ namespace GeoJSON.Text.Converters;
 /// </summary>
 public class GeometryConverter : JsonConverter<Geometry>
 {
-    /// <summary>
-    ///     Determines whether this instance can convert the specified object type.
-    /// </summary>
-    /// <param name="objectType">Type of the object.</param>
-    /// <returns>
-    ///     <c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
-    /// </returns>
+    /// <inheritdoc/>
     public override bool CanConvert(Type objectType)
     {
         return typeof(Geometry).IsAssignableFromType(objectType);
     }
 
-    /// <summary>
-    ///     Reads the JSON representation of the object.
-    /// </summary>
-    /// <param name="reader">The <see cref="T:System.Text.Json.Utf8JsonReader" /> to read from.</param>
-    /// <param name="objectType">Type of the object.</param>
-    /// <param name="existingValue">The existing value of object being read.</param>
-    /// <param name="serializer">The calling serializer.</param>
-    /// <returns>
-    ///     The object value.
-    /// </returns>
+    /// <inheritdoc/>
     public override Geometry Read(
         ref Utf8JsonReader reader,
         Type type,
@@ -53,19 +38,7 @@ public class GeometryConverter : JsonConverter<Geometry>
         throw new JsonException($"expected null, object or array token but received {reader.TokenType}");
     }
 
-    /// <summary>
-    /// Reads the geo json.
-    /// </summary>
-    /// <param name="value">The value.</param>
-    /// <returns></returns>
-    /// <exception cref="Newtonsoft.Json.JsonReaderException">
-    /// json must contain a "type" property
-    /// or
-    /// type must be a valid geojson geometry object type
-    /// </exception>
-    /// <exception cref="System.NotSupportedException">
-    /// Feature and FeatureCollection types are Feature objects and not Geometry objects
-    /// </exception>
+    /// <inheritdoc/>
     private static Geometry ReadGeoJson(ref Utf8JsonReader reader, JsonSerializerOptions options)
     {
         var document = JsonDocument.ParseValue(ref reader);
@@ -84,21 +57,31 @@ public class GeometryConverter : JsonConverter<Geometry>
             throw new JsonException("type must be a valid geojson geometry object type");
         }
 
+        // Create new options without GeometryConverter to avoid recursion
+        var safeOptions = new JsonSerializerOptions(options);
+        for (int i = safeOptions.Converters.Count - 1; i >= 0; i--)
+        {
+            if (safeOptions.Converters[i] is GeometryConverter)
+            {
+                safeOptions.Converters.RemoveAt(i);
+            }
+        }
+
         switch (geoJsonType)
         {
             // https://github.com/Azure/azure-cosmos-dotnet-v3/issues/5312
             case GeometryType.Point:
-                return value.Deserialize<Point>(options);
+                return value.Deserialize<Point>(safeOptions);
             //case GeometryType.MultiPoint:
             //    return value.Deserialize<MultiPoint>(options);
             case GeometryType.LineString:
-                return value.Deserialize<LineString>(options);
+                return value.Deserialize<LineString>(safeOptions);
             //case GeometryType.MultiLineString:
             //    return value.Deserialize<MultiLineString>(options);
             case GeometryType.Polygon:
-                return value.Deserialize<Polygon>(options);
+                return value.Deserialize<Polygon>(safeOptions);
             case GeometryType.MultiPolygon:
-                return value.Deserialize<MultiPolygon>(options);
+                return value.Deserialize<MultiPolygon>(safeOptions);
             //case GeometryType.GeometryCollection:
             //    return value.Deserialize<GeometryCollection>(options);
             default:
@@ -106,12 +89,7 @@ public class GeometryConverter : JsonConverter<Geometry>
         }
     }
 
-    /// <summary>
-    /// Writes the JSON representation of the object.
-    /// </summary>
-    /// <param name="writer">The <see cref="T:System.Text.Json.Utf8JsonWriter" /> to write to.</param>
-    /// <param name="value">The value.</param>
-    /// <param name="serializer">The calling serializer.</param>
+    /// <inheritdoc/>
     public override void Write(
         Utf8JsonWriter writer,
         Geometry value,
@@ -146,5 +124,4 @@ public class GeometryConverter : JsonConverter<Geometry>
                 throw new NotSupportedException("Feature and FeatureCollection types are Feature objects and not Geometry objects");
         }
     }
-
 }

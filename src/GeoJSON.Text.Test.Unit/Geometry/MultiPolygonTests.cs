@@ -63,7 +63,7 @@ public class MultiPolygonTests : TestBase
     [Test]
     public void Can_Serialize()
     {
-        // Arrang
+        // Arrange
         var polygon1 = new PolygonCoordinates(new List<LinearRing>
         {
             new LinearRing(new List<Position>

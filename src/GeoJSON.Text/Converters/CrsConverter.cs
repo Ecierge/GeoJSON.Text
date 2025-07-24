@@ -3,45 +3,69 @@
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-
 using Microsoft.Azure.Cosmos.Spatial;
 
 namespace GeoJSON.Text.Converters;
 
 /// <summary>
-/// Converts <see cref="ICRSObject"/> types to and from JSON.
+/// <see cref="JsonConverter"/> for <see cref="Crs" /> class and all its implementations.
 /// </summary>
-public class CrsConverter : JsonConverter<Crs>
+public sealed class CrsConverter : JsonConverter<Crs>
 {
     public override bool HandleNull => true;
 
-    /// <summary>
-    /// Determines whether this instance can convert the specified object type.
-    /// </summary>
-    /// <param name="objectType">Type of the object.</param>
-    /// <returns>
-    /// <c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
-    /// </returns>
+    /// <inheritdoc/>
     public override bool CanConvert(Type objectType)
     {
         return typeof(Crs).IsAssignableFromType(objectType);
     }
 
-    /// <summary>
-    /// Reads the JSON representation of the object.
-    /// </summary>
-    /// <param name="reader">The <see cref="T:System.Text.Json.Utf8JsonReader" /> to read from.</param>
-    /// <param name="objectType">Type of the object.</param>
-    /// <param name="existingValue">The existing value of object being read.</param>
-    /// <param name="serializer">The calling serializer.</param>
-    /// <returns>
-    /// The object value.
-    /// </returns>
-    /// <exception cref="Newtonsoft.Json.JsonReaderException">
-    /// CRS must be null or a json object
-    ///     or
-    /// CRS must have a "type" property
-    /// </exception>
+    /// <inheritdoc/>
+    public override void Write(
+        Utf8JsonWriter writer,
+        Crs value,
+        JsonSerializerOptions options)
+    {
+        if (value == null)
+        {
+            writer.WriteNullValue();
+            return;
+        }
+        switch (value.Type)
+        {
+            case CrsType.Linked:
+                var linkedCrs = (LinkedCrs)value;
+                writer.WriteStartObject();
+                writer.WriteString("type", "link");
+                writer.WritePropertyName("properties");
+                writer.WriteStartObject();
+                writer.WriteString("href", linkedCrs.Href);
+                if (!string.IsNullOrEmpty(linkedCrs.HrefType))
+                {
+                    writer.WriteString("type", linkedCrs.HrefType);
+                }
+                writer.WriteEndObject();
+                writer.WriteEndObject();
+                break;
+            case CrsType.Named:
+                var namedCrs = (NamedCrs)value;
+                writer.WriteStartObject();
+                writer.WriteString("type", "name");
+                writer.WritePropertyName("properties");
+                writer.WriteStartObject();
+                writer.WriteString("name", namedCrs.Name);
+                writer.WriteEndObject();
+                writer.WriteEndObject();
+                break;
+            case CrsType.Unspecified:
+                writer.WriteNullValue();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    /// <inheritdoc/>
     public override Crs Read(
         ref Utf8JsonReader reader,
         Type type,
@@ -55,97 +79,37 @@ public class CrsConverter : JsonConverter<Crs>
         {
             throw new JsonException("CRS must be null or a json object");
         }
-
         var jObject = JsonDocument.ParseValue(ref reader).RootElement;
-        JsonElement token;
-        if (!jObject.TryGetProperty("type", out token))
+        if (!jObject.TryGetProperty("type", out var typeToken) || typeToken.ValueKind != JsonValueKind.String)
         {
-            throw new JsonException("CRS must have a \"type\" property");
+            throw new JsonException("CRS must have a 'type' property");
         }
-
-        var crsType = token.GetString();
-
-        if (string.Equals("name", crsType, StringComparison.OrdinalIgnoreCase))
+        if (!jObject.TryGetProperty("properties", out var properties) || properties.ValueKind != JsonValueKind.Object)
         {
-            if (jObject.TryGetProperty("properties", out var properties))
-            {
-                var name = properties.GetProperty("name").GetString();
-
-                var target = Crs.Named(name);
-                var converted = jObject.Deserialize<NamedCrs>();
-
-                if (converted.Properties != null)
+            throw new JsonException("CRS must have a 'properties' object");
+        }
+        var crsType = typeToken.GetString();
+        switch (crsType)
+        {
+            case "name":
+                if (!properties.TryGetProperty("name", out var nameToken) || nameToken.ValueKind != JsonValueKind.String)
                 {
-                    foreach (var item in converted?.Properties)
-                    {
-                        target.Properties[item.Key] = item.Value;
-                    }
+                    throw new JsonException("CRS 'name' property must be a string");
                 }
-
-                return target;
-            }
-        }
-        else if (string.Equals("link", crsType, StringComparison.OrdinalIgnoreCase))
-        {
-            if (jObject.TryGetProperty("properties", out var properties))
-            {
-                var href = properties.GetProperty("href").GetString();
-
-                var target = Crs.Linked(href);
-
-                var converted = jObject.Deserialize<LinkedCrs>();
-
-                if (converted.Properties != null)
+                return Crs.Named(nameToken.GetString());
+            case "link":
+                if (!properties.TryGetProperty("href", out var hrefToken) || hrefToken.ValueKind != JsonValueKind.String)
                 {
-                    foreach (var item in converted?.Properties)
-                    {
-                        target.Properties[item.Key] = item.Value;
-                    }
+                    throw new JsonException("CRS 'href' property must be a string");
                 }
-
-                return target;
-            }
-        }
-
-        //return new NotSupportedException(string.Format("Type {0} unexpected.", crsType));
-        return null;
-    }
-
-    /// <summary>
-    ///     Writes the JSON representation of the object.
-    /// </summary>
-    /// <param name="writer">The <see cref="T:System.Text.Json.Utf8JsonWriter" /> to write to.</param>
-    /// <param name="value">The value.</param>
-    /// <param name="serializer">The calling serializer.</param>
-    /// <exception cref="System.ArgumentOutOfRangeException"></exception>
-    public override void Write(
-        Utf8JsonWriter writer,
-        Crs crsValue,
-        JsonSerializerOptions options)
-    {
-        var value = (Crs)crsValue;
-
-        if(value == null)
-            return;
-
-        switch (value.Type)
-        {
-            case CrsType.Named:
-                //var nameObject = (NamedCRS)value;
-                //var serializedName = JsonSerializer.Serialize(nameObject, options);
-                JsonSerializer.Serialize(writer, value, typeof(NamedCrs), options);
-                break;
-            case CrsType.Linked:
-                //var linkedObject = (LinkedCRS)value;
-                //var serializedLink = JsonSerializer.Serialize(linkedObject, options);
-                //writer.WriteRawValue(serializedLink);
-                JsonSerializer.Serialize(writer, value, typeof(LinkedCrs), options);
-                break;
-            case CrsType.Unspecified:
-                writer.WriteNullValue();
-                break;
+                string hrefType = null;
+                if (properties.TryGetProperty("type", out var hrefTypeToken) && hrefTypeToken.ValueKind == JsonValueKind.String)
+                {
+                    hrefType = hrefTypeToken.GetString();
+                }
+                return Crs.Linked(hrefToken.GetString()); // Only pass href, as previous code did
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new JsonException($"CRS type '{crsType}' is not supported");
         }
     }
 }

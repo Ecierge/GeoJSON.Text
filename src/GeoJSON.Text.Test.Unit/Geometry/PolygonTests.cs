@@ -276,8 +276,6 @@ public class PolygonTests : TestBase
             })
         });
         var actualPolygon = JsonSerializer.Deserialize<Polygon>(json, DefaultJsonSerializerOptions);
-        Assert.AreEqual(expectedPolygon, actualPolygon);
-    }
 
         Assert.AreEqual(expectedPolygon, actualPolygon);
     }

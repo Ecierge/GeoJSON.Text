@@ -16,28 +16,13 @@ public class PositionEnumerableConverter : JsonConverter<IList<Position>>
 {
     private static readonly PositionConverter PositionConverter = new();
 
-    /// <summary>
-    ///     Determines whether this instance can convert the specified object type.
-    /// </summary>
-    /// <param name="objectType">Type of the object.</param>
-    /// <returns>
-    ///     <c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
-    /// </returns>
+    /// <inheritdoc/>
     public override bool CanConvert(Type objectType)
     {
         return typeof(IReadOnlyCollection<Position>).IsAssignableFromType(objectType);
     }
 
-    /// <summary>
-    ///     Reads the JSON representation of the object.
-    /// </summary>
-    /// <param name="reader">The <see cref="T:System.Text.Json.Utf8JsonReader" /> to read from.</param>
-    /// <param name="objectType">Type of the object.</param>
-    /// <param name="existingValue">The existing value of object being read.</param>
-    /// <param name="serializer">The calling serializer.</param>
-    /// <returns>
-    ///     The object value.
-    /// </returns>
+    /// <inheritdoc/>
     public override IList<Position> Read(
         ref Utf8JsonReader reader,
         Type type,
@@ -73,12 +58,7 @@ public class PositionEnumerableConverter : JsonConverter<IList<Position>>
         throw new JsonException($"expected null, object or array token but received {reader.TokenType}");
     }
 
-    /// <summary>
-    ///     Writes the JSON representation of the object.
-    /// </summary>
-    /// <param name="writer">The <see cref="T:System.Text.Json.Utf8JsonWriter" /> to write to.</param>
-    /// <param name="value">The value.</param>
-    /// <param name="serializer">The calling serializer.</param>
+    /// <inheritdoc/>
     public override void Write(
         Utf8JsonWriter writer,
         IList<Position> coordinateElements,

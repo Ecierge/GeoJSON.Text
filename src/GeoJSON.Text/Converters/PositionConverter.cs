@@ -9,32 +9,12 @@ using System.Text.Json.Serialization;
 namespace GeoJSON.Text.Converters;
 
 /// <summary>
-///     Converter to read and write an <see cref="IPosition" />, that is,
+///     Converter to read and write an <see cref="Position" />, that is,
 ///     the coordinates of a <see cref="Point" />.
 /// </summary>
 public class PositionConverter : JsonConverter<Position>
 {
-    /// <summary>
-    ///     Determines whether this instance can convert the specified object type.
-    /// </summary>
-    /// <param name="objectType">Type of the object.</param>
-    /// <returns>
-    ///     <c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
-    /// </returns>
-    public override bool CanConvert(Type objectType)
-    {
-        return typeof(Position).IsAssignableFromType(objectType);
-    }
-
-    /// <summary>
-    ///     Reads the JSON representation of the object.
-    /// </summary>
-    /// <param name="reader">The <see cref="T:System.Text.Json.Utf8JsonReader" /> to read from.</param>
-    /// <param name="type">Type of the object.</param>
-    /// <param name="options">Serializer options.</param>
-    /// <returns>
-    ///     The object value.
-    /// </returns>
+    /// <inheritdoc/>
     public override Position Read(
         ref Utf8JsonReader reader,
         Type type,
@@ -47,10 +27,10 @@ public class PositionConverter : JsonConverter<Position>
                 throw new ArgumentException("Expected start of array");
             }
 
-            double lng, lat;
+            double lon, lat;
             double? alt;
 
-            // Read longitude
+            // Read longitude (GeoJSON)
             if (!reader.Read())
             {
                 throw new ArgumentException("Expected number, but got end of data");
@@ -63,18 +43,18 @@ public class PositionConverter : JsonConverter<Position>
 
             if (reader.TokenType == JsonTokenType.Number)
             {
-                lng = reader.GetDouble();
+                lon = reader.GetDouble();
             }
             else if (reader.TokenType == JsonTokenType.String)
             {
-                lng = JsonSerializer.Deserialize<double>(ref reader, options);
+                lon = JsonSerializer.Deserialize<double>(ref reader, options);
             }
             else
             {
                 throw new ArgumentException("Expected number but got other type");
             }
 
-            // Read latitude
+            // Read latitude (GeoJSON)
             if (!reader.Read())
             {
                 throw new ArgumentException("Expected number, but got end of data");
@@ -105,7 +85,7 @@ public class PositionConverter : JsonConverter<Position>
             }
             if (reader.TokenType == JsonTokenType.EndArray)
             {
-                return new Position(lat, lng);
+                return new Position(lat, lon); // Cosmos expects (lat, lon)
             }
             else if (reader.TokenType == JsonTokenType.Null)
             {
@@ -134,7 +114,7 @@ public class PositionConverter : JsonConverter<Position>
                 throw new ArgumentException("Expected 2 or 3 coordinates but got >= 4");
             }
 
-            return new Position(lat, lng);//, alt);
+            return new Position(lat, lon, alt); // Cosmos expects (lat, lon, alt)
         }
         catch (Exception e)
         {
@@ -142,28 +122,20 @@ public class PositionConverter : JsonConverter<Position>
         }
     }
 
-    /// <summary>
-    ///     Writes the JSON representation of the object.
-    /// </summary>
-    /// <param name="writer">The <see cref="T:System.Text.Json.Utf8JsonWriter" /> to write to.</param>
-    /// <param name="value">The value.</param>
-    /// <param name="serializer">The calling serializer.</param>
+    /// <inheritdoc/>
     public override void Write(
         Utf8JsonWriter writer,
         Position coordinates,
         JsonSerializerOptions options)
     {
         writer.WriteStartArray();
-
+        // GeoJSON order: [longitude, latitude, altitude]
         writer.WriteNumberValue(coordinates.Longitude);
         writer.WriteNumberValue(coordinates.Latitude);
-
         if (coordinates.Altitude.HasValue)
         {
             writer.WriteNumberValue(coordinates.Altitude.Value);
         }
-
         writer.WriteEndArray();
     }
-
 }
