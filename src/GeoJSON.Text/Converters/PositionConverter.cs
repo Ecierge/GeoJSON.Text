@@ -3,6 +3,8 @@
 using Microsoft.Azure.Cosmos.Spatial;
 using System;
 using System.Collections.Generic;
+//using System.Formats.Asn1;
+using System.Net.NetworkInformation;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -16,110 +18,17 @@ public class PositionConverter : JsonConverter<Position>
 {
     /// <inheritdoc/>
     public override Position Read(
-        ref Utf8JsonReader reader,
-        Type type,
-        JsonSerializerOptions options)
+           ref Utf8JsonReader reader,
+           Type objectType,
+           JsonSerializerOptions options)
     {
-        try
+        double[] coordinates = JsonSerializer.Deserialize<double[]>(ref reader, options);
+
+        if (coordinates == null || coordinates.Length < 2)
         {
-            if (reader.TokenType != JsonTokenType.StartArray)
-            {
-                throw new ArgumentException("Expected start of array");
-            }
-
-            double lon, lat;
-            double? alt;
-
-            // Read longitude (GeoJSON)
-            if (!reader.Read())
-            {
-                throw new ArgumentException("Expected number, but got end of data");
-            }
-
-            if (reader.TokenType == JsonTokenType.EndArray)
-            {
-                throw new ArgumentException("Expected 2 or 3 coordinates but got 0");
-            }
-
-            if (reader.TokenType == JsonTokenType.Number)
-            {
-                lon = reader.GetDouble();
-            }
-            else if (reader.TokenType == JsonTokenType.String)
-            {
-                lon = JsonSerializer.Deserialize<double>(ref reader, options);
-            }
-            else
-            {
-                throw new ArgumentException("Expected number but got other type");
-            }
-
-            // Read latitude (GeoJSON)
-            if (!reader.Read())
-            {
-                throw new ArgumentException("Expected number, but got end of data");
-            }
-
-            if (reader.TokenType == JsonTokenType.EndArray)
-            {
-                throw new ArgumentException("Expected 2 or 3 coordinates but got 1");
-            }
-
-            if (reader.TokenType == JsonTokenType.Number)
-            {
-                lat = reader.GetDouble();
-            }
-            else if (reader.TokenType == JsonTokenType.String)
-            {
-                lat = JsonSerializer.Deserialize<double>(ref reader, options);
-            }
-            else
-            {
-                throw new ArgumentException("Expected number but got other type");
-            }
-
-            // Read altitude, or return if end of array is found
-            if (!reader.Read())
-            {
-                throw new ArgumentException("Unexpected end of data");
-            }
-            if (reader.TokenType == JsonTokenType.EndArray)
-            {
-                return new Position(lat, lon); // Cosmos expects (lat, lon)
-            }
-            else if (reader.TokenType == JsonTokenType.Null)
-            {
-                alt = null;
-            }
-            else if (reader.TokenType == JsonTokenType.Number)
-            {
-                alt = reader.GetDouble();
-            }
-            else if (reader.TokenType == JsonTokenType.String)
-            {
-                alt = JsonSerializer.Deserialize<double>(ref reader, options);
-            }
-            else
-            {
-                throw new ArgumentException("Expected number but got other type");
-            }
-
-            // Check what comes next. Expects end of array.
-            if (!reader.Read())
-            {
-                throw new ArgumentException("Expected end of array, but got end of data");
-            }
-            if (reader.TokenType != JsonTokenType.EndArray)
-            {
-                throw new ArgumentException("Expected 2 or 3 coordinates but got >= 4");
-            }
-
-            return new Position(lat, lon, alt); // Cosmos expects (lat, lon, alt)
+            throw new ArgumentException("Expected 2 coordinates type of double");
         }
-        catch (Exception e)
-        {
-            throw new JsonException("Error parsing coordinates", e);
-        }
+        return new Position(coordinates);
     }
 
     /// <inheritdoc/>
@@ -128,14 +37,7 @@ public class PositionConverter : JsonConverter<Position>
         Position coordinates,
         JsonSerializerOptions options)
     {
-        writer.WriteStartArray();
-        // GeoJSON order: [longitude, latitude, altitude]
-        writer.WriteNumberValue(coordinates.Longitude);
-        writer.WriteNumberValue(coordinates.Latitude);
-        if (coordinates.Altitude.HasValue)
-        {
-            writer.WriteNumberValue(coordinates.Altitude.Value);
-        }
-        writer.WriteEndArray();
+        JsonSerializer.Serialize(writer, coordinates.Coordinates, options);
     }
+
 }
