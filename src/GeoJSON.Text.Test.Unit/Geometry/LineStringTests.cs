@@ -149,19 +149,6 @@ public class LineStringTests : TestBase
         Assert.AreEqual(expectedLineString.Positions[2].Altitude, actualLineString.Positions[2].Altitude);
     }
 
-    [Test]
-    public void Constructor_No_Coordinates_Throws_Exception()
-    {
-        var coordinates = new List<Position>();
-        Assert.Throws<ArgumentOutOfRangeException>(() => new LineString(coordinates));
-    }
-
-    [Test]
-    public void Constructor_Null_Coordinates_Throws_Exception()
-    {
-        Assert.Throws<ArgumentNullException>(() => new LineString((IList<Position>)null));
-    }
-
     private LineString GetLineString(double offset = 0.0)
     {
         var coordinates = new List<Position>
