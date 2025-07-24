@@ -10,6 +10,8 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
+using NUnit.Framework;
+
 [assembly: AssemblyTitle("GeoJSON.Text.Tests")]
 [assembly: AssemblyDescription("Unit tests for the GeoJSON.Text library")]
 [assembly: AssemblyConfiguration("")]
@@ -18,6 +20,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright © Joerg Battermann 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+
+[assembly: Parallelizable(ParallelScope.All)]
 
 [assembly: ComVisible(false)]
 
