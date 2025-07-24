@@ -31,11 +31,6 @@ public class PointConverter : JsonConverter<Point>
                 {
                     position = JsonSerializer.Deserialize<Position>(ref reader, options);
                 }
-                //// Ignore all other properties
-                //else
-                //{
-                //    reader.Skip();
-                //}
             }
         }
 

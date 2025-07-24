@@ -18,7 +18,6 @@ public abstract class TestBase
         {
             new Converters.CrsConverter(),
             new Converters.JsonStringEnumMemberConverter(),
-            new Converters.BoundingBoxConverter(),
             new Converters.GeometryConverter(),
             new Converters.GeometryEnumerableConverter(),
             new Converters.PointEnumerableConverter(),

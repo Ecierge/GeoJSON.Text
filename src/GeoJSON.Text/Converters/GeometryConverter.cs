@@ -16,12 +16,6 @@ namespace GeoJSON.Text.Converters;
 public class GeometryConverter : JsonConverter<Geometry>
 {
     /// <inheritdoc/>
-    public override bool CanConvert(Type objectType)
-    {
-        return typeof(Geometry).IsAssignableFromType(objectType);
-    }
-
-    /// <inheritdoc/>
     public override Geometry Read(
         ref Utf8JsonReader reader,
         Type type,
@@ -57,31 +51,21 @@ public class GeometryConverter : JsonConverter<Geometry>
             throw new JsonException("type must be a valid geojson geometry object type");
         }
 
-        // Create new options without GeometryConverter to avoid recursion
-        var safeOptions = new JsonSerializerOptions(options);
-        for (int i = safeOptions.Converters.Count - 1; i >= 0; i--)
-        {
-            if (safeOptions.Converters[i] is GeometryConverter)
-            {
-                safeOptions.Converters.RemoveAt(i);
-            }
-        }
-
         switch (geoJsonType)
         {
             // https://github.com/Azure/azure-cosmos-dotnet-v3/issues/5312
             case GeometryType.Point:
-                return value.Deserialize<Point>(safeOptions);
+                return value.Deserialize<Point>(options);
             //case GeometryType.MultiPoint:
             //    return value.Deserialize<MultiPoint>(options);
             case GeometryType.LineString:
-                return value.Deserialize<LineString>(safeOptions);
+                return value.Deserialize<LineString>(options);
             //case GeometryType.MultiLineString:
             //    return value.Deserialize<MultiLineString>(options);
             case GeometryType.Polygon:
-                return value.Deserialize<Polygon>(safeOptions);
+                return value.Deserialize<Polygon>(options);
             case GeometryType.MultiPolygon:
-                return value.Deserialize<MultiPolygon>(safeOptions);
+                return value.Deserialize<MultiPolygon>(options);
             //case GeometryType.GeometryCollection:
             //    return value.Deserialize<GeometryCollection>(options);
             default:
@@ -95,7 +79,6 @@ public class GeometryConverter : JsonConverter<Geometry>
         Geometry value,
         JsonSerializerOptions options)
     {
-        // Use System.Text.Json to serialize, relying on registered converters
         JsonSerializer.Serialize(writer, value, value.GetType(), options);
     }
 }

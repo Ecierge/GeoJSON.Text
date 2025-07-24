@@ -70,7 +70,7 @@ public class PointTests : TestBase
     [Test]
     public void Can_Serialize_With_Lat_Lon_Alt_DefaultValueHandling_Ignore()
     {
-        var point = new Point(new Position(53.2455662, 90.65464646, 200.4567));
+        var point = new Point(new Position(90.65464646, 53.2455662, 200.4567));
         var expectedJson = "{\"coordinates\":[90.65464646,53.2455662,200.4567],\"type\":\"Point\"}";
         var options = new JsonSerializerOptions(DefaultJsonSerializerOptions)
         {

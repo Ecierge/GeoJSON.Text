@@ -2,9 +2,6 @@
 
 using Microsoft.Azure.Cosmos.Spatial;
 using System;
-using System.Collections.Generic;
-//using System.Formats.Asn1;
-using System.Net.NetworkInformation;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -39,5 +36,4 @@ public class PositionConverter : JsonConverter<Position>
     {
         JsonSerializer.Serialize(writer, coordinates.Coordinates, options);
     }
-
 }
