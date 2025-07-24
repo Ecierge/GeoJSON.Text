@@ -95,33 +95,7 @@ public class GeometryConverter : JsonConverter<Geometry>
         Geometry value,
         JsonSerializerOptions options)
     {
-        // Standard serialization
-        switch (value.Type)
-        {
-            // https://github.com/Azure/azure-cosmos-dotnet-v3/issues/5312
-            case GeometryType.Point:
-                JsonSerializer.Serialize<Point>(writer, (Point)value);
-                break;
-            //case GeometryType.MultiPoint:
-            //    JsonSerializer.Serialize<MultiPoint>(writer, (MultiPoint)value);
-            //    break;
-            case GeometryType.LineString:
-                JsonSerializer.Serialize<LineString>(writer, (LineString)value);
-                break;
-            //case GeometryType.MultiLineString:
-            //    JsonSerializer.Serialize<MultiLineString>(writer, (MultiLineString)value);
-            //    break;
-            case GeometryType.Polygon:
-                JsonSerializer.Serialize<Polygon>(writer, (Polygon)value);
-                break;
-            case GeometryType.MultiPolygon:
-                JsonSerializer.Serialize<MultiPolygon>(writer, (MultiPolygon)value);
-                break;
-            //case GeometryType.GeometryCollection:
-            //    JsonSerializer.Serialize<GeometryCollection>(writer, (GeometryCollection)value);
-            //    break;
-            default:
-                throw new NotSupportedException("Feature and FeatureCollection types are Feature objects and not Geometry objects");
-        }
+        // Use System.Text.Json to serialize, relying on registered converters
+        JsonSerializer.Serialize(writer, value, value.GetType(), options);
     }
 }
