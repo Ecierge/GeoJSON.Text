@@ -44,9 +44,9 @@ public class MultiPolygonConverter : JsonConverter<MultiPolygon>
     public override void Write(Utf8JsonWriter writer, MultiPolygon value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
-        writer.WriteString("type", "MultiPolygon");
         writer.WritePropertyName("coordinates");
         JsonSerializer.Serialize(writer, value.Polygons, options);
+        writer.WriteString("type", "MultiPolygon");
         writer.WriteEndObject();
     }
 }
